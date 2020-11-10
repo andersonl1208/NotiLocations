@@ -83,3 +83,8 @@ lint/generated/
 lint/outputs/
 lint/tmp/
 # lint/reports/
+
+
+# Google Maps api page
+app/src/debug/res/values/google_maps_api.xml
+app/src/release/values/google_maps_api.xml
