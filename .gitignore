@@ -87,4 +87,4 @@ lint/tmp/
 
 # Google Maps api page
 app/src/debug/res/values/google_maps_api.xml
-app/src/release/values/google_maps_api.xml
+app/src/release/res/values/google_maps_api.xml
