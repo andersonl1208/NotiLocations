@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">NotiLocations</string>
+    <string name="tasks">Tasks</string>
+    <string name="create_task">Create Task</string>
 </resources>
