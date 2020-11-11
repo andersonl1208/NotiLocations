@@ -15,6 +15,7 @@ class SwipeViewFragment : Fragment() {
     private lateinit var SwipeViewAdapter: SwipeViewAdapter
     private lateinit var viewPager: ViewPager2
 
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
