@@ -1,5 +1,8 @@
 <resources>
     <string name="app_name">NotiLocations</string>
     <string name="tasks">Tasks</string>
-    <string name="create_task">Create Task</string>
+    <string name="create_task">Create task</string>
+    <string name="titleTextView">Task title</string>
+    <string name="title_input">task</string>
+    <string name="descriptionTextView">Description</string>
 </resources>
