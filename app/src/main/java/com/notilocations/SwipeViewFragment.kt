@@ -43,22 +43,27 @@ class SwipeViewAdapter(fragment: Fragment) : FragmentStateAdapter(fragment) {
     override fun createFragment(position: Int): Fragment {
         // Return a NEW fragment instance in createFragment(int)
 
-        val fragment = Fragment1()
-        val fragment1 = Fragment2()
+        val fragment1 = Fragment1()
+        val fragment2 = Fragment2()
+        val fragment3 = Fragment3()
 
         fragment1.arguments = Bundle().apply {
             // Our object is just an integer
             putInt(ARG_OBJECT, position + 1)
         }
-        fragment.arguments = Bundle().apply {
+        fragment2.arguments = Bundle().apply {
+            // Our object is just an integer
+            putInt(ARG_OBJECT, position + 1)
+        }
+        fragment3.arguments = Bundle().apply {
             // Our object is just an integer
             putInt(ARG_OBJECT, position + 1)
         }
         //determine where the fragments go, I.E. obje
         when (position) {
-            0 -> return fragment
-            1 -> return fragment1
-            2 -> return fragment
+            0 -> return fragment1
+            1 -> return fragment2
+            2 -> return fragment3
             3 -> return fragment1
             else -> return fragment1
         }
@@ -98,6 +103,26 @@ class Fragment2 : Fragment() {
     ): View {
         //the return statement is what determines what fragment appears
         return inflater.inflate(R.layout.fragment_create_task, container, false)
+    }
+
+
+    /*not really needed right now, but will probably be needed at some point to access data in these fragments.
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        arguments?.takeIf { it.containsKey(ARG_OBJECT) }?.apply {
+            //val textView: TextView = view.findViewById(android.R.id.text1)
+            //textView.text = getInt(ARG_OBJECT).toString()
+        }
+    }*/
+}
+class Fragment3 : Fragment() {
+
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
+        //the return statement is what determines what fragment appears
+        return inflater.inflate(R.layout.fragment_maps, container, false)
     }
 
 
