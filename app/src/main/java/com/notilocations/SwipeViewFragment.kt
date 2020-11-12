@@ -45,7 +45,7 @@ class SwipeViewAdapter(fragment: Fragment) : FragmentStateAdapter(fragment) {
 
         val fragment1 = Fragment1()
         val fragment2 = Fragment2()
-        val fragment3 = Fragment3()
+        val fragment3 = MapsFragment()
 
         fragment1.arguments = Bundle().apply {
             // Our object is just an integer
@@ -64,7 +64,6 @@ class SwipeViewAdapter(fragment: Fragment) : FragmentStateAdapter(fragment) {
             0 -> return fragment1
             1 -> return fragment2
             2 -> return fragment3
-            3 -> return fragment1
             else -> return fragment1
         }
     }
