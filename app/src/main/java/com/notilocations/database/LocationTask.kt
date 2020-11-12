@@ -1,15 +1,13 @@
 package com.notilocations.database
 
-import androidx.room.ColumnInfo
-import androidx.room.Entity
-import androidx.room.ForeignKey
-import androidx.room.Index
+import androidx.room.*
+import java.util.*
 
 @Entity(
-    primaryKeys = ["location_id", "task_id"],
     indices = [Index(value = ["location_id"]), Index(value = ["task_id"])]
 )
 data class LocationTask(
+    @PrimaryKey val id: Long?,
     @ForeignKey(
         entity = Location::class,
         parentColumns = ["id"],
@@ -26,5 +24,17 @@ data class LocationTask(
         onDelete = ForeignKey.CASCADE
     )
     @ColumnInfo(name = "task_id")
-    val taskId: Long
+    val taskId: Long,
+
+    @ColumnInfo(name = "distance")
+    val distance: Double,
+
+    @ColumnInfo(name = "max_speed")
+    val maxSpeed: Int,
+
+    @ColumnInfo(name = "creation_date")
+    val creationDate: Date,
+
+    @ColumnInfo(name = "is_completed")
+    val isCompleted: Boolean
 )

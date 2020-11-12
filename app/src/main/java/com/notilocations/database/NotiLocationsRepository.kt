@@ -13,13 +13,11 @@ class NotiLocationsRepository private constructor(app: Application) {
 
     private var tasks: LiveData<List<Task>>
     private var locations: LiveData<List<Location>>
+    private var locationTasks: LiveData<List<LocationTask>>
 
-    private var tasksWithLocations: LiveData<List<TaskWithLocations>>
-    private var locationsWithTasks: LiveData<List<LocationWithTasks>>
-
-    private var activeLocations: LiveData<List<Location>>
-    private var activeTasks: LiveData<List<Task>>
-    private var activeTasksWithLocations: LiveData<List<TaskWithLocations>>
+    private var fullLocationTasks: LiveData<List<FullLocationTask>>
+    private var activeFullLocationTasks: LiveData<List<FullLocationTask>>
+    private var completedFullLocationTasks: LiveData<List<FullLocationTask>>
 
     private var executor: Executor
 
@@ -31,31 +29,37 @@ class NotiLocationsRepository private constructor(app: Application) {
 
         tasks = taskDao.getTasks()
         locations = locationDao.getLocations()
+        locationTasks = locationTaskDao.getLocationTasks()
 
-        tasksWithLocations = taskDao.getTasksWithLocations()
-        locationsWithTasks = locationDao.getLocationsWithTasks()
-
-        activeTasks = taskDao.getActiveTasks()
-        activeLocations = locationDao.getActiveLocations()
-        activeTasksWithLocations = taskDao.getActiveTasksWithLocations()
+        fullLocationTasks = locationTaskDao.getFullLocationTasks()
+        activeFullLocationTasks = locationTaskDao.getActiveFullLocationTasks()
+        completedFullLocationTasks = locationTaskDao.getCompletedFullLocationTasks()
 
         executor = Executors.newSingleThreadExecutor()
     }
 
-    fun getAllLocations(): LiveData<List<Location>> {
-        return locations
-    }
-
-    fun getAllTasks(): LiveData<List<Task>> {
+    fun getTasks(): LiveData<List<Task>> {
         return tasks
     }
 
-    fun getAllActiveLocations(): LiveData<List<Location>> {
-        return activeLocations
+    fun getLocations(): LiveData<List<Location>> {
+        return locations
     }
 
-    fun getAllActiveTasks(): LiveData<List<Task>> {
-        return activeTasks
+    fun getLocationTasks(): LiveData<List<LocationTask>> {
+        return locationTasks
+    }
+
+    fun getFullLocationTasks(): LiveData<List<FullLocationTask>> {
+        return fullLocationTasks
+    }
+
+    fun getActiveFullLocationTasks(): LiveData<List<FullLocationTask>> {
+        return activeFullLocationTasks
+    }
+
+    fun getCompletedFullLocationTasks(): LiveData<List<FullLocationTask>> {
+        return completedFullLocationTasks
     }
 
     fun getLocation(id: Long): LiveData<Location> {
@@ -66,12 +70,12 @@ class NotiLocationsRepository private constructor(app: Application) {
         return taskDao.getTask(id)
     }
 
-    fun getLocationWithTasks(id: Long): LiveData<LocationWithTasks> {
-        return locationDao.getLocationWithTasks(id)
+    fun getLocationTask(id: Long): LiveData<LocationTask> {
+        return locationTaskDao.getLocationTask(id)
     }
 
-    fun getTasksWithLocations(id: Long): LiveData<TaskWithLocations> {
-        return taskDao.getTaskWithLocations(id)
+    fun getFullLocationTask(id: Long): LiveData<FullLocationTask> {
+        return locationTaskDao.getFullLocationTask(id)
     }
 
     fun insertTask(task: Task) {
@@ -91,7 +95,6 @@ class NotiLocationsRepository private constructor(app: Application) {
             taskDao.delete(task)
         }
     }
-
 
     fun insertLocation(location: Location) {
         executor.execute {
