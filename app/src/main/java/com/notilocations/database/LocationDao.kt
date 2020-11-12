@@ -20,7 +20,7 @@ interface LocationDao {
     @Query("SELECT * from location WHERE id = :id")
     fun getLocationWithTasks(id: Long): LiveData<LocationWithTasks>
 
-    @Query("SELECT DISTINCT location.* FROM location INNER JOIN LocationTask ON location.id = locationTask.location_id INNER JOIN Task ON locationTask.task_id = task.id WHERE task.is_completed")
+    @Query("SELECT DISTINCT location.* FROM location")
     fun getActiveLocations(): LiveData<List<Location>>
 
     @Insert

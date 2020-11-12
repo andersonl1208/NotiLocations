@@ -19,11 +19,11 @@ interface TaskDao {
     @Query("SELECT * from task WHERE id = :id")
     fun getTaskWithLocations(id: Long): LiveData<TaskWithLocations>
 
-    @Query("SELECT * FROM task WHERE task.is_completed")
+    @Query("SELECT * FROM task")
     fun getActiveTasks(): LiveData<List<Task>>
 
     @Transaction
-    @Query("SELECT * FROM task WHERE task.is_completed")
+    @Query("SELECT * FROM task")
     fun getActiveTasksWithLocations(): LiveData<List<TaskWithLocations>>
 
     @Insert
