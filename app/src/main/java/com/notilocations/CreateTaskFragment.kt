@@ -20,6 +20,9 @@ class CreateTaskFragment : Fragment() {
         binding.submitTask.setOnClickListener{v: View ->
             v.findNavController().navigate(R.id.action_createTaskFragment_to_swipeView)
         }
+        binding.addLocation.setOnClickListener { v: View ->
+            v.findNavController().navigate(R.id.action_createTaskFragment_to_mapsFragment)
+        }
         return binding.root
     }
 }

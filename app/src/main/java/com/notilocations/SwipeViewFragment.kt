@@ -64,5 +64,3 @@ class SwipeViewAdapter(fragment: Fragment) : FragmentStateAdapter(fragment) {
         }
     }
 }
-
-//private const val ARG_OBJECT = "object"

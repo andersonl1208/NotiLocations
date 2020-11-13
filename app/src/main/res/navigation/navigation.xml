@@ -13,6 +13,9 @@
         <action
             android:id="@+id/action_createTaskFragment_to_swipeView"
             app:destination="@id/swipeView" />
+        <action
+            android:id="@+id/action_createTaskFragment_to_mapsFragment"
+            app:destination="@id/mapsFragment" />
     </fragment>
     <fragment
         android:id="@+id/swipeView"
@@ -21,6 +24,15 @@
         tools:layout="@layout/fragment_swipe_view">
         <action
             android:id="@+id/action_swipeView_to_createTaskFragment"
+            app:destination="@id/createTaskFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/mapsFragment"
+        android:name="com.notilocations.MapsFragment"
+        android:label="fragment_maps"
+        tools:layout="@layout/fragment_maps" >
+        <action
+            android:id="@+id/action_mapsFragment_to_createTaskFragment"
             app:destination="@id/createTaskFragment" />
     </fragment>
 </navigation>
