@@ -4,6 +4,12 @@
         <!-- Customize your theme here. -->
         <item name="colorPrimary">@color/weldonBlue</item>
         <item name="colorPrimaryDark">@color/stormCloud</item>
+        <item name="colorAccent">@color/stormCloud</item>
+    </style>
+
+    <style name="DarkMode" parent="Theme.MaterialComponents.DayNight">
+        <item name="colorPrimary">@color/Black</item>
+        <item name="colorPrimaryDark">@color/darkSurface</item>
         <item name="colorAccent">@color/colorAccent</item>
     </style>
 </resources>

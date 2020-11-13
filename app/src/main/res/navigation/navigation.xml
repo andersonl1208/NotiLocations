@@ -25,6 +25,9 @@
         <action
             android:id="@+id/action_swipeView_to_createTaskFragment"
             app:destination="@id/createTaskFragment" />
+        <action
+            android:id="@+id/action_swipeView_to_settingsFragment"
+            app:destination="@id/settingsFragment" />
     </fragment>
     <fragment
         android:id="@+id/mapsFragment"
@@ -35,4 +38,8 @@
             android:id="@+id/action_mapsFragment_to_createTaskFragment"
             app:destination="@id/createTaskFragment" />
     </fragment>
+    <fragment
+        android:id="@+id/settingsFragment"
+        android:name="com.notilocations.SettingsFragment"
+        android:label="SettingsFragment" />
 </navigation>
