@@ -17,8 +17,8 @@
     <fragment
         android:id="@+id/swipeView"
         android:name="com.notilocations.SwipeViewFragment"
-        android:label="fragment_swipe_view"
-        tools:layout="@layout/fragment_swipe_view" >
+        android:label="@string/notilocations"
+        tools:layout="@layout/fragment_swipe_view">
         <action
             android:id="@+id/action_swipeView_to_createTaskFragment"
             app:destination="@id/createTaskFragment" />

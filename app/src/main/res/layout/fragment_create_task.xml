@@ -6,7 +6,8 @@
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:background="@color/secondaryPink">
 
         <TextView
             android:id="@+id/titleTextView"
@@ -54,12 +55,12 @@
             android:layout_marginStart="@dimen/padding"
             android:layout_marginTop="@dimen/padding"
             android:layout_marginEnd="@dimen/padding"
+            android:autofillHints=""
             android:inputType="text"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/taskDescription"
-            android:autofillHints="" />
+            app:layout_constraintTop_toBottomOf="@+id/taskDescription" />
 
         <Button
             android:id="@+id/submitTask"
