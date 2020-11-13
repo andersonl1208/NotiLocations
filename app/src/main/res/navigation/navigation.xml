@@ -11,7 +11,7 @@
         android:label="@string/create_task"
         tools:layout="@layout/fragment_create_task">
         <action
-            android:id="@+id/action_createTaskFragment_to_swipeView2"
+            android:id="@+id/action_createTaskFragment_to_swipeView"
             app:destination="@id/swipeView" />
     </fragment>
     <fragment
@@ -20,8 +20,7 @@
         android:label="fragment_swipe_view"
         tools:layout="@layout/fragment_swipe_view" >
         <action
-            android:id="@+id/action_swipeView_to_createTaskFragment2"
-            app:destination="@id/createTaskFragment"
-            app:popUpTo="@id/createTaskFragment" />
+            android:id="@+id/action_swipeView_to_createTaskFragment"
+            app:destination="@id/createTaskFragment" />
     </fragment>
 </navigation>
