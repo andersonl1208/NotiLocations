@@ -10,6 +10,7 @@
     <color name="columbiaBlue">#B8D8D8</color>
     <color name="weldonBlue">#7A9E9F</color>
     <color name="stormCloud">#4F6367 </color>
+    <color name="gray">#CDCDCD</color>
     <color name="darkSurface">#121212</color>
     <color name="Black">#000000</color>
 </resources>
