@@ -9,7 +9,6 @@ import androidx.viewpager2.adapter.FragmentStateAdapter
 import androidx.viewpager2.widget.ViewPager2
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
-import com.notilocations.databinding.FragmentTaskListBinding
 
 //collection of fragments
 class SwipeViewFragment : Fragment() {
@@ -54,16 +53,9 @@ class SwipeViewAdapter(fragment: Fragment) : FragmentStateAdapter(fragment) {
         // Return a NEW fragment instance in createFragment(int)
 
         val taskList = TaskListFragment()
-        val mapFragment = Map()
+        val mapFragment = MapsFragment()
 
-        taskList.arguments = Bundle().apply {
-            // Our object is just an integer
-            putInt(ARG_OBJECT, position + 1)
-        }
-        mapFragment.arguments = Bundle().apply {
-            // Our object is just an integer
-            putInt(ARG_OBJECT, position + 1)
-        }
+
         //determine where the fragments go, I.E. pos 0 is the first fragment, pos 1 is the second fragmnet
         when (position) {
             0 -> return taskList
@@ -73,37 +65,4 @@ class SwipeViewAdapter(fragment: Fragment) : FragmentStateAdapter(fragment) {
     }
 }
 
-private const val ARG_OBJECT = "object"
-
-// Instances of this class are fragments representing a single
-// object in our collection.
-class TaskList : Fragment() {
-
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View {
-        //the return statement is what determines what fragment appears
-
-        return inflater.inflate(R.layout.fragment_task_list, container, false)
-    }
-    /*not really needed right now, but will probably be needed at some point to access data in these fragments.
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        arguments?.takeIf { it.containsKey(ARG_OBJECT) }?.apply {
-            //val textView: TextView = view.findViewById(android.R.id.text1)
-            //textView.text = getInt(ARG_OBJECT).toString()
-        }
-    }*/
-}
-
-class Map : Fragment() {
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View {
-        //the return statement is what determines what fragment appears
-        return inflater.inflate(R.layout.fragment_maps, container, false)
-    }
-}
+//private const val ARG_OBJECT = "object"
