@@ -3,11 +3,13 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.viewpager2.adapter.FragmentStateAdapter
 import androidx.viewpager2.widget.ViewPager2
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
+import com.notilocations.databinding.FragmentTaskListBinding
 
 //collection of fragments
 class SwipeViewFragment : Fragment() {
@@ -44,7 +46,6 @@ class SwipeViewFragment : Fragment() {
     }
 }
 
-
 class SwipeViewAdapter(fragment: Fragment) : FragmentStateAdapter(fragment) {
 
     override fun getItemCount(): Int = 2
@@ -52,7 +53,7 @@ class SwipeViewAdapter(fragment: Fragment) : FragmentStateAdapter(fragment) {
     override fun createFragment(position: Int): Fragment {
         // Return a NEW fragment instance in createFragment(int)
 
-        val taskList = TaskList()
+        val taskList = TaskListFragment()
         val mapFragment = Map()
 
         taskList.arguments = Bundle().apply {
@@ -84,6 +85,7 @@ class TaskList : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         //the return statement is what determines what fragment appears
+
         return inflater.inflate(R.layout.fragment_task_list, container, false)
     }
     /*not really needed right now, but will probably be needed at some point to access data in these fragments.
