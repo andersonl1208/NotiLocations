@@ -8,4 +8,6 @@
     <string name="add_task">Add Task</string>
     <string name="submitTask">"Submit"</string>
     <string name="notilocations">Notilocations</string>
+    <string name="about">About</string>
+    <string name="settings">Settings</string>
 </resources>
