@@ -7,4 +7,5 @@
     <string name="descriptionTextView">Description</string>
     <string name="add_task">Add Task</string>
     <string name="submitTask">"Submit"</string>
+    <string name="notilocations">Notilocations</string>
 </resources>
