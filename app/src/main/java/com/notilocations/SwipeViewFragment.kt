@@ -9,12 +9,11 @@ import androidx.viewpager2.widget.ViewPager2
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
 
+//collection of fragments
 class SwipeViewFragment : Fragment() {
-    // When requested, this adapter returns a DemoObjectFragment,
-    // representing an object in the collection.
+    // When requested, this adapter returns a fragment of our choosing
     private lateinit var SwipeViewAdapter: SwipeViewAdapter
     private lateinit var viewPager: ViewPager2
-
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -29,42 +28,46 @@ class SwipeViewFragment : Fragment() {
         viewPager = view.findViewById(R.id.pager)
         viewPager.adapter = SwipeViewAdapter
         val tabLayout = view.findViewById<TabLayout>(R.id.tab_layout)
+
+        //populate the tabs
         TabLayoutMediator(tabLayout, viewPager) { tab, position ->
             tab.text = "OBJECT ${(position + 1)}"
         }.attach()
+
+        //Disable user input while on the map fragment Very important that position lines up with the position the map fragment is in.
+        viewPager.registerOnPageChangeCallback(object: ViewPager2.OnPageChangeCallback(){
+            override fun onPageSelected(position: Int) {
+                viewPager.isUserInputEnabled = position != 1
+                super.onPageSelected(position)
+            }
+        })
     }
 }
 
 
 class SwipeViewAdapter(fragment: Fragment) : FragmentStateAdapter(fragment) {
 
-    override fun getItemCount(): Int = 4
+    override fun getItemCount(): Int = 2
 
     override fun createFragment(position: Int): Fragment {
         // Return a NEW fragment instance in createFragment(int)
 
-        val fragment1 = Fragment1()
-        val fragment2 = Fragment2()
-        val fragment3 = MapsFragment()
+        val taskList = TaskList()
+        val mapFragment = Map()
 
-        fragment1.arguments = Bundle().apply {
+        taskList.arguments = Bundle().apply {
             // Our object is just an integer
             putInt(ARG_OBJECT, position + 1)
         }
-        fragment2.arguments = Bundle().apply {
+        mapFragment.arguments = Bundle().apply {
             // Our object is just an integer
             putInt(ARG_OBJECT, position + 1)
         }
-        fragment3.arguments = Bundle().apply {
-            // Our object is just an integer
-            putInt(ARG_OBJECT, position + 1)
-        }
-        //determine where the fragments go, I.E. obje
+        //determine where the fragments go, I.E. pos 0 is the first fragment, pos 1 is the second fragmnet
         when (position) {
-            0 -> return fragment1
-            1 -> return fragment2
-            2 -> return fragment3
-            else -> return fragment1
+            0 -> return taskList
+            1 -> return mapFragment
+            else -> return taskList
         }
     }
 }
@@ -73,7 +76,7 @@ private const val ARG_OBJECT = "object"
 
 // Instances of this class are fragments representing a single
 // object in our collection.
-class Fragment1 : Fragment() {
+class TaskList : Fragment() {
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -83,8 +86,6 @@ class Fragment1 : Fragment() {
         //the return statement is what determines what fragment appears
         return inflater.inflate(R.layout.fragment_task_list, container, false)
     }
-
-
     /*not really needed right now, but will probably be needed at some point to access data in these fragments.
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         arguments?.takeIf { it.containsKey(ARG_OBJECT) }?.apply {
@@ -93,28 +94,8 @@ class Fragment1 : Fragment() {
         }
     }*/
 }
-class Fragment2 : Fragment() {
 
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View {
-        //the return statement is what determines what fragment appears
-        return inflater.inflate(R.layout.fragment_create_task, container, false)
-    }
-
-
-    /*not really needed right now, but will probably be needed at some point to access data in these fragments.
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        arguments?.takeIf { it.containsKey(ARG_OBJECT) }?.apply {
-            //val textView: TextView = view.findViewById(android.R.id.text1)
-            //textView.text = getInt(ARG_OBJECT).toString()
-        }
-    }*/
-}
-class Fragment3 : Fragment() {
-
+class Map : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -123,13 +104,4 @@ class Fragment3 : Fragment() {
         //the return statement is what determines what fragment appears
         return inflater.inflate(R.layout.fragment_maps, container, false)
     }
-
-
-    /*not really needed right now, but will probably be needed at some point to access data in these fragments.
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        arguments?.takeIf { it.containsKey(ARG_OBJECT) }?.apply {
-            //val textView: TextView = view.findViewById(android.R.id.text1)
-            //textView.text = getInt(ARG_OBJECT).toString()
-        }
-    }*/
 }
