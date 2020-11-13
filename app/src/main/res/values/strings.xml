@@ -5,4 +5,6 @@
     <string name="titleTextView">Task title</string>
     <string name="title_input">task</string>
     <string name="descriptionTextView">Description</string>
+    <string name="add_task">Add Task</string>
+    <string name="submitTask">"Submit"</string>
 </resources>

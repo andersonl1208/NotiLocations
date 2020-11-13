@@ -11,23 +11,17 @@
         android:label="@string/create_task"
         tools:layout="@layout/fragment_create_task">
         <action
-            android:id="@+id/action_createTaskFragment_to_taskListFragment"
-            app:destination="@id/taskListFragment"
-            app:popUpTo="@id/taskListFragment" />
-    </fragment>
-    <fragment
-        android:id="@+id/taskListFragment"
-        android:name="com.notilocations.TaskListFragment"
-        android:label="@string/tasks"
-        tools:layout="@layout/fragment_task_list">
-        <action
-            android:id="@+id/action_taskListFragment_to_createTaskFragment"
-            app:destination="@id/createTaskFragment"
-            app:popUpTo="@id/taskListFragment" />
+            android:id="@+id/action_createTaskFragment_to_swipeView2"
+            app:destination="@id/swipeView" />
     </fragment>
     <fragment
         android:id="@+id/swipeView"
         android:name="com.notilocations.SwipeViewFragment"
         android:label="fragment_swipe_view"
-        tools:layout="@layout/fragment_swipe_view" />
+        tools:layout="@layout/fragment_swipe_view" >
+        <action
+            android:id="@+id/action_swipeView_to_createTaskFragment2"
+            app:destination="@id/createTaskFragment"
+            app:popUpTo="@id/createTaskFragment" />
+    </fragment>
 </navigation>
