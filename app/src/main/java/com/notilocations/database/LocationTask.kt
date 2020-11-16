@@ -3,6 +3,16 @@ package com.notilocations.database
 import androidx.room.*
 import java.util.*
 
+/**
+ * Entity class for a location task.
+ * @property id The primary key for the location task. If null when inserted, it will be auto-generated.
+ * @property locationId The id of the location associated with this location task.
+ * @property taskId The id of the task associated with this location task.
+ * @property distance How distance from the location where the notification will get sent.
+ * @property maxSpeed The max speed you can be going while still getting a notification.
+ * @property creationDate The date the location task was created.
+ * @property isCompleted Whether or not this location task has been completed.
+ */
 @Entity(
     indices = [Index(value = ["location_id"]), Index(value = ["task_id"])]
 )

@@ -1,32 +1,19 @@
 package com.notilocations
 
 import android.os.Bundle
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
-import androidx.databinding.DataBindingUtil
-import androidx.fragment.app.Fragment
-import androidx.navigation.findNavController
-import androidx.navigation.fragment.findNavController
-import androidx.navigation.ui.NavigationUI
+import androidx.preference.PreferenceFragmentCompat
 
+/**
+ * Shows the user the settings screen.
+ */
+class SettingsFragment : PreferenceFragmentCompat() {
 
-class SettingsFragment : Fragment() {
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-
-
-        val binding =
-            DataBindingUtil.inflate<com.notilocations.databinding.FragmentSettingsBinding>(
-                inflater,
-                R.layout.fragment_settings,
-                container,
-                false
-            )
-        return binding.root
-
+    /**
+     * Inflates the settings fragment and sets the preferences to the correct values.
+     * @param savedInstanceState The previously saved state of the fragment if it exists.
+     * @param rootKey The preference key of the preference screen to use as the root of the preference hierarchy
+     */
+    override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
+        setPreferencesFromResource(R.xml.settings, rootKey)
     }
 }
