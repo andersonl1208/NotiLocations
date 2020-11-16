@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <SwitchPreferenceCompat
+        android:key="dark_theme"
+        android:title="Enable Dark Theme" />
+
+    <SwitchPreferenceCompat
+        android:key="voice_notification"
+        android:title="Read notifications aloud" />
+
+    <SeekBarPreference
+        android:key="update_interval"
+        android:title="Seconds between location updates"
+        android:max="10"
+        app:min="1"
+        app:showSeekBarValue="true" />
+
+    <SeekBarPreference
+        android:key="distance"
+        android:title="Default distance to trigger notifications"
+        android:max="10"
+        app:min="1"
+        app:showSeekBarValue="true" />
+
+    <SeekBarPreference
+        android:key="max_speed"
+        android:title="Default max speed for notifications"
+        android:max="100"
+        app:min="25"
+        app:showSeekBarValue="true" />
+
+</PreferenceScreen>
