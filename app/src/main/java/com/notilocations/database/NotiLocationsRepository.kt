@@ -86,13 +86,13 @@ class NotiLocationsRepository private constructor(app: Application) {
 
     fun deleteTask(task: Task) {
         executor.execute {
-            taskDao.update(task)
+            taskDao.delete(task)
         }
     }
 
     fun updateTask(task: Task) {
         executor.execute {
-            taskDao.delete(task)
+            taskDao.update(task)
         }
     }
 
