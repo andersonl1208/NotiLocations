@@ -2,7 +2,7 @@
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    tools:context=".CreateTaskFragment">
+    tools:context=".UpdateTaskFragment">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
@@ -63,25 +63,39 @@
             app:layout_constraintTop_toBottomOf="@+id/taskDescription" />
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
-            android:id="@+id/submitTask"
+            android:id="@+id/submitUpdate"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="@dimen/padding"
+            android:layout_marginBottom="16dp"
             android:src="@drawable/ic_baseline_check_24"
-            android:text="@string/submitTask"
+            android:text="@string/applyChanges"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toEndOf="@+id/deleteButton" />
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/deleteButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
+            android:src="@drawable/ic_baseline_delete_forever_24"
+            android:text="@string/deleteButton"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/submitUpdate"
+            app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintStart_toStartOf="parent" />
 
         <Button
-            android:id="@+id/addLocation"
+            android:id="@+id/updateLocation"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/padding"
-            android:text="@string/addLocation"
+            android:text="@string/updateLocation"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/description_input" />
+
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

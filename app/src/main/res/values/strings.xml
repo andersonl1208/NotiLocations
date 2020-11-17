@@ -11,4 +11,10 @@
     <string name="about">About</string>
     <string name="settings">Settings</string>
     <string name="addLocation">Add a location</string>
+    <string name="date">date</string>
+    <string name="taskTitle">Title</string>
+    <string name="taskDescription">description</string>
+    <string name="applyChanges">Apply</string>
+    <string name="updateLocation">Update Location</string>
+    <string name="deleteButton">Delete</string>
 </resources>
