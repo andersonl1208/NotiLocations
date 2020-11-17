@@ -32,7 +32,11 @@ class SwipeViewFragment : Fragment() {
 
         //populate the tabs
         TabLayoutMediator(tabLayout, viewPager) { tab, position ->
-            tab.text = "OBJECT ${(position + 1)}"
+            when(position){
+                0-> tab.text = "Task list"
+                1-> tab.text = "Task locations"
+            }
+
         }.attach()
 
         //Disable user input while on the map fragment Very important that position lines up with the position the map fragment is in.
