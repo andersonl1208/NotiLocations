@@ -67,6 +67,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginBottom="@dimen/padding"
+            android:backgroundTint="@color/weldonBlue"
             android:src="@drawable/ic_baseline_check_24"
             android:text="@string/submitTask"
             app:layout_constraintBottom_toBottomOf="parent"
