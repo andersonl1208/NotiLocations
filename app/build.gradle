@@ -28,6 +28,14 @@ android {
         versionName "1.0"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+
+
+        // Read the API key from ./secure.properties into R.string.maps_api_key
+        def secureProperties = new Properties()
+        if (file("../secure.properties").exists()) {
+            file("../secure.properties")?.withInputStream { secureProperties.load(it) }
+        }
+        resValue "string", "google_maps_key", (secureProperties.getProperty("MAPS_API_KEY") ?: "")
     }
 
     buildTypes {
