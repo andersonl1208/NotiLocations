@@ -37,7 +37,7 @@ class MapsFragment : Fragment(), OnMapReadyCallback {
          }
 
 
-        enableMyLocation()
+//        enableMyLocation()
 
 
         val tempLocation = LatLng(44.87335854645772, -91.9216525554657)
@@ -47,7 +47,7 @@ class MapsFragment : Fragment(), OnMapReadyCallback {
         with(map.uiSettings) {
             isZoomControlsEnabled = true
             isCompassEnabled = true
-            isMyLocationButtonEnabled = true
+            isMyLocationButtonEnabled = false
             isIndoorLevelPickerEnabled = true
             isMapToolbarEnabled = true
             isZoomGesturesEnabled = true
@@ -103,19 +103,19 @@ class MapsFragment : Fragment(), OnMapReadyCallback {
      * but we are using EasyPermissions to handle it so we can suppress the "MissingPermission"
      * check.
      */
-    @SuppressLint("MissingPermission")
-    @AfterPermissionGranted(R.string.location)
-    private fun enableMyLocation() {
-        if (hasLocationPermission()) {
-            map.isMyLocationEnabled = true
-        } else {
-            EasyPermissions.requestPermissions(this, getString(R.string.location), 0,
-                Manifest.permission.ACCESS_FINE_LOCATION
-            )
-        }
-    }
-
-    private fun hasLocationPermission(): Boolean {
-        return EasyPermissions.hasPermissions(this.requireContext(), Manifest.permission.ACCESS_FINE_LOCATION)
-    }
+//    @SuppressLint("MissingPermission")
+//    @AfterPermissionGranted(R.string.location)
+//    private fun enableMyLocation() {
+//        if (hasLocationPermission()) {
+//            map.isMyLocationEnabled = true
+//        } else {
+//            EasyPermissions.requestPermissions(this, getString(R.string.location), 0,
+//                Manifest.permission.ACCESS_FINE_LOCATION
+//            )
+//        }
+//    }
+//
+//    private fun hasLocationPermission(): Boolean {
+//        return EasyPermissions.hasPermissions(this.requireContext(), Manifest.permission.ACCESS_FINE_LOCATION)
+//    }
 }
