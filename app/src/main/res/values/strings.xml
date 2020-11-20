@@ -17,4 +17,10 @@
     <string name="applyChanges">Apply</string>
     <string name="updateLocation">Update Location</string>
     <string name="deleteButton">Delete</string>
+    <string name="about_desc">How many times have you had a task to do outside of the house, but forgot the next time you were near that location?
+        Our app is here to solve that problem. This app introduces a simple way for people to manage errands and tasks that many may forget when out and about in their daily lives.
+        Connecting the app to your phone’s location allows the user to input various tasks or errands that need to be done, such as stopping at the grocery store to pick up a few items,
+        or the pharmacy to pick up a prescription. Simply input or select a specified location on the map and input a goal for the location,
+        such as a shopping list that will be sent to the user when within the specified radius which can then be opened and viewed. </string>
+
 </resources>

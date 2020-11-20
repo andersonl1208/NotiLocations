@@ -53,10 +53,14 @@ class SwipeViewFragment : Fragment() {
         inflater?.inflate(R.menu.main_menu, menu)
     }
 
+
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        return NavigationUI.onNavDestinationSelected(item, requireView().findNavController())
+        return NavigationUI.onNavDestinationSelected(item!!, requireView().findNavController())
                 || super.onOptionsItemSelected(item)
+
     }
+
+
 }
 
 class SwipeViewAdapter(fragment: Fragment) : FragmentStateAdapter(fragment) {

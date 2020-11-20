@@ -37,11 +37,16 @@
         <argument
             android:name="updatedTitle"
             app:argType="string" />
-        <argument android:name="updatedDescription"
+        <argument
+            android:name="updatedDescription"
             app:argType="string" />
         <argument
             android:name="position"
             app:argType="long" />
+        <action
+            android:id="@+id/action_swipeView_to_aboutFragment2"
+            app:destination="@id/aboutFragment2"
+            app:launchSingleTop="false" />
     </fragment>
     <fragment
         android:id="@+id/mapsFragment"
@@ -78,5 +83,13 @@
         <argument
             android:name="position"
             app:argType="long" />
+    </fragment>
+    <fragment
+        android:id="@+id/aboutFragment2"
+        android:name="com.notilocations.AboutFragment"
+        android:label="AboutFragment">
+        <action
+            android:id="@+id/action_aboutFragment2_to_swipeView"
+            app:destination="@id/swipeView" />
     </fragment>
 </navigation>
