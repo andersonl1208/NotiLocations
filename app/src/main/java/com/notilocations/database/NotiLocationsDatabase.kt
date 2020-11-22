@@ -9,7 +9,7 @@ import androidx.room.TypeConverters
 /**
  * The NotiLocations database class.
  */
-@Database(entities = [Location::class, LocationTask::class, Task::class], version = 2)
+@Database(entities = [Location::class, LocationTask::class, Task::class], version = 3)
 @TypeConverters(DateConverter::class)
 abstract class NotiLocationsDatabase : RoomDatabase() {
 
@@ -50,7 +50,7 @@ abstract class NotiLocationsDatabase : RoomDatabase() {
                     NotiLocationsDatabase::class.java,
                     "notilocations_db"
                 )
-                    .fallbackToDestructiveMigration() // Destroys the database if needed
+                    //.fallbackToDestructiveMigration() // Destroys the database if needed
                     .build()
             }
 

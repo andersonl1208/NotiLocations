@@ -71,6 +71,14 @@ class NotiLocationsViewModel(app: Application) : AndroidViewModel(app) {
         return activeFullLocationTasks
     }
 
+    fun getFullLocationTasksStatic(): List<FullLocationTask> {
+        return repository.getFullLocationTasksStatic()
+    }
+
+    fun getActiveFullLocationTasksStatic(): List<FullLocationTask> {
+        return repository.getActiveFullLocationTasksStatic()
+    }
+
     /**
      * Gets a live data list of all completed full location tasks.
      * @return A live data list of all completed full location tasks.
@@ -113,6 +121,15 @@ class NotiLocationsViewModel(app: Application) : AndroidViewModel(app) {
      */
     fun getFullLocationTask(id: Long): LiveData<FullLocationTask> {
         return repository.getFullLocationTask(id)
+    }
+
+    /**
+     * Gets the full location task with the given id.
+     * @param id The id of the full location task to get.
+     * @return A static view of the full location task.
+     */
+    fun getFullLocationTaskStatic(id: Long): FullLocationTask {
+        return repository.getFullLocationTaskStatic(id)
     }
 
     /**

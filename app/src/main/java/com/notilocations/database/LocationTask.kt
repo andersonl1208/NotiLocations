@@ -40,7 +40,7 @@ data class LocationTask(
     val distance: Float?,
 
     @ColumnInfo(name = "max_speed")
-    val maxSpeed: Int,
+    val maxSpeed: Int?,
 
     @ColumnInfo(name = "creation_date")
     val creationDate: Date,
