@@ -23,5 +23,8 @@
         Connecting the app to your phone’s location allows the user to input various tasks or errands that need to be done, such as stopping at the grocery store to pick up a few items,
         or the pharmacy to pick up a prescription. Simply input or select a specified location on the map and input a goal for the location,
         such as a shopping list that will be sent to the user when within the specified radius which can then be opened and viewed. </string>
+    <string name="primary_notification_channel_name">Location Notifications</string>
+    <string name="primary_notification_channel_description">Notifications for when you are close to a location.</string>
+    <string name="primary_notification_channel_id">0</string>
 
 </resources>

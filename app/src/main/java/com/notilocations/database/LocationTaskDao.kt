@@ -35,6 +35,16 @@ interface LocationTaskDao {
     fun getFullLocationTask(id: Long): LiveData<FullLocationTask>
 
     /**
+     * Gets the full location task with the given id, which contains the location task with the associated location
+     * and task objects included.
+     * @param id The id of the location task to get.
+     * @return A static view of the full location task.
+     */
+    @Query("SELECT * FROM locationtask WHERE id = :id")
+    fun getFullLocationTaskStatic(id: Long): FullLocationTask
+
+
+    /**
      * Gets a list of all the locations tasks in the database as full location tasks with the associated location
      * and task objects included.
      * @return A live data list of all the location tasks with location and task objects included in the database.
@@ -49,6 +59,22 @@ interface LocationTaskDao {
      */
     @Query("SELECT * FROM locationtask WHERE NOT is_completed")
     fun getActiveFullLocationTasks(): LiveData<List<FullLocationTask>>
+
+    /**
+     * Gets a list of all the locations tasks in the database as full location tasks with the associated location
+     * and task objects included.
+     * @return A static list of all the location tasks with location and task objects included in the database.
+     */
+    @Query("SELECT * FROM locationtask")
+    fun getFullLocationTasksStatic(): List<FullLocationTask>
+
+    /**
+     * Gets a list of all the locations tasks in the database with the is_completed field set to false as full
+     * location tasks with the associated location and task objects included.
+     * @return A static list of all the active location tasks with location and task objects included in the database.
+     */
+    @Query("SELECT * FROM locationtask WHERE NOT is_completed")
+    fun getActiveFullLocationTasksStatic(): List<FullLocationTask>
 
     /**
      * Gets a list of all the locations tasks in the database with the is_completed field set to true as full

@@ -11,13 +11,6 @@
         android:title="Read notifications aloud" />
 
     <SeekBarPreference
-        android:key="update_interval"
-        android:title="Seconds between location updates"
-        android:max="10"
-        app:min="1"
-        app:showSeekBarValue="true" />
-
-    <SeekBarPreference
         android:key="distance"
         android:title="Default distance to trigger notifications"
         android:max="10"

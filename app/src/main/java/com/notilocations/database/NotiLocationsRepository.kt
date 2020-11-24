@@ -96,6 +96,22 @@ class NotiLocationsRepository private constructor(app: Application) {
     }
 
     /**
+     * Gets a live data list of all full location tasks.
+     * @return A live data list of all full location tasks.
+     */
+    fun getFullLocationTasksStatic(): List<FullLocationTask> {
+        return locationTaskDao.getFullLocationTasksStatic()
+    }
+
+    /**
+     * Gets a live data list of all active full location tasks.
+     * @return A live data list of all active full location tasks.
+     */
+    fun getActiveFullLocationTasksStatic(): List<FullLocationTask> {
+        return locationTaskDao.getActiveFullLocationTasksStatic()
+    }
+
+    /**
      * Gets a live data list of all completed full location tasks.
      * @return A live data list of all completed full location tasks.
      */
@@ -137,6 +153,15 @@ class NotiLocationsRepository private constructor(app: Application) {
      */
     fun getFullLocationTask(id: Long): LiveData<FullLocationTask> {
         return locationTaskDao.getFullLocationTask(id)
+    }
+
+    /**
+     * Gets the full location task with the given id.
+     * @param id The id of the full location task to get.
+     * @return A static view of the full location task.
+     */
+    fun getFullLocationTaskStatic(id: Long): FullLocationTask {
+        return locationTaskDao.getFullLocationTaskStatic(id)
     }
 
     /**
