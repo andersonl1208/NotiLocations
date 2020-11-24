@@ -29,6 +29,9 @@ class UpdateTaskFragment : Fragment() {
 
         binding.titleInput.setText(args.title)
         binding.descriptionInput.setText(args.description)
+        binding.titleInput.hint = args.title
+        binding.descriptionInput.hint = args.title
+
         Log.i("position of item", args.position.toString())
 
         binding.submitUpdate.setOnClickListener{v: View ->
