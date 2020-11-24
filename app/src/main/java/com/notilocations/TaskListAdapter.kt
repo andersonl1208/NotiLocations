@@ -4,7 +4,6 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.CheckBox
 import android.widget.TextView
 import androidx.navigation.findNavController
 import androidx.recyclerview.widget.RecyclerView
@@ -37,8 +36,9 @@ class TaskListAdapter : RecyclerView.Adapter<TaskListAdapter.TaskHolder>(){
         val taskTitle = holder.taskView.findViewById<TextView>(R.id.titleText)
         val taskDescription = holder.taskView.findViewById<TextView>(R.id.descriptionText)
 
-        taskTitle.setOnClickListener { v: View ->
-            val action = SwipeViewFragmentDirections.actionSwipeViewToUpdateTaskFragment(taskTitle.text.toString(),taskDescription.text.toString(),
+        holder.taskView.setOnClickListener { v: View ->
+            val action = SwipeViewFragmentDirections.actionSwipeViewToUpdateTaskFragment(
+                taskTitle.text.toString(), taskDescription.text.toString(),
                 tasks?.get(position.toInt())?.id!!
             )
             v.findNavController().navigate(action)
