@@ -26,8 +26,8 @@ class UpdateTaskFragment : Fragment() {
     ): View? {
         val binding = DataBindingUtil.inflate<FragmentUpdateTaskBinding>(inflater, R.layout.fragment_update_task, container, false)
 
-        binding.titleInput.hint = args.title
-        binding.descriptionInput.hint = args.description
+        binding.titleInput.setText(args.title)
+        binding.descriptionInput.setText(args.description)
         Log.i("position of item", args.position.toString())
 
         binding.submitUpdate.setOnClickListener{v: View ->
@@ -42,6 +42,8 @@ class UpdateTaskFragment : Fragment() {
 
             }
         }
+
+
         binding.deleteButton.setOnClickListener{v: View ->
             //delete the task
             taskDetails.deleteTask(Task(args.position, binding.titleInput.text.toString(), binding.descriptionInput.text.toString()))
