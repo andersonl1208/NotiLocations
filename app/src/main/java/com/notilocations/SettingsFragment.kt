@@ -34,8 +34,10 @@ class SettingsFragment : PreferenceFragmentCompat(),
         if (key == "dark_theme") {
             if (sharedPreferences?.getBoolean(key, false) == true) {
                 AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
+                activity?.recreate()
             } else {
                 AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
+                activity?.recreate()
             }
         }
     }
