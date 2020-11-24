@@ -43,6 +43,10 @@ class TaskListFragment : Fragment() {
             val action = SwipeViewFragmentDirections.actionSwipeViewToCreateTaskFragment(recyclerAdapter.itemCount.toLong())
             v.findNavController().navigate(action)
         }
+        binding.settingButton.setOnClickListener{v: View ->
+            val action = SwipeViewFragmentDirections.actionSwipeViewToSettingsFragment()
+            v.findNavController().navigate(action)
+        }
         return binding.root
     }
 }
