@@ -44,8 +44,9 @@ class MainActivity : AppCompatActivity() {
 
         val binding =
             DataBindingUtil.setContentView<ActivityMainBinding>(this, R.layout.activity_main)
-        val navController = this.findNavController(R.id.navHostFragment)
-        NavigationUI.setupActionBarWithNavController(this, navController)
+
+//        val navController = this.findNavController(R.id.navHostFragment)
+//        NavigationUI.setupActionBarWithNavController(this, navController)
 
         createNotificationChannel()
 
