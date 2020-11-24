@@ -6,6 +6,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.inputmethod.EditorInfo
 import android.widget.Toast
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
@@ -28,6 +29,9 @@ class UpdateTaskFragment : Fragment() {
 
         binding.titleInput.setText(args.title)
         binding.descriptionInput.setText(args.description)
+        binding.titleInput.hint = args.title
+        binding.descriptionInput.hint = args.title
+
         Log.i("position of item", args.position.toString())
 
         binding.submitUpdate.setOnClickListener{v: View ->
@@ -37,7 +41,8 @@ class UpdateTaskFragment : Fragment() {
             else{
                 //update the task
                 taskDetails.updateTask(Task( args.position, binding.titleInput.text.toString(), binding.descriptionInput.text.toString()))
-
+                binding.titleInput.onEditorAction(EditorInfo.IME_ACTION_DONE)
+                binding.descriptionInput.onEditorAction(EditorInfo.IME_ACTION_DONE)
                 v.findNavController().navigate(R.id.action_updateTaskFragment_to_swipeView)
 
             }
@@ -47,6 +52,8 @@ class UpdateTaskFragment : Fragment() {
         binding.deleteButton.setOnClickListener{v: View ->
             //delete the task
             taskDetails.deleteTask(Task(args.position, binding.titleInput.text.toString(), binding.descriptionInput.text.toString()))
+            binding.titleInput.onEditorAction(EditorInfo.IME_ACTION_DONE)
+            binding.descriptionInput.onEditorAction(EditorInfo.IME_ACTION_DONE)
             v.findNavController().navigate(R.id.action_updateTaskFragment_to_swipeView)
         }
         binding.updateLocation.setOnClickListener { v: View ->

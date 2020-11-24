@@ -10,9 +10,9 @@
     <color name="secondaryPink">#FEEAE6</color>
     <color name="beige">#EEF5DB</color>
     <color name="columbiaBlue">#B8D8D8</color>
-    <color name="weldonBlue">#7A9E9F</color>
+    <color name="weldonBlue">@color/darkSurface</color>
     <color name="stormCloud">@color/darkSurface</color>
-    <color name="gray">@color/darkSurface</color>
+    <color name="gray">@color/Black</color>
     <color name="darkSurface">#121212</color>
     <color name="Black">#000000</color>
 </resources>

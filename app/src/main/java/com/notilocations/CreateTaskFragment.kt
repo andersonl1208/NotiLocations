@@ -6,6 +6,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.inputmethod.EditorInfo
 import android.widget.Toast
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
@@ -33,7 +34,8 @@ class CreateTaskFragment : Fragment() {
             else{
                 val taskDetails : NotiLocationsViewModel by viewModels()
                 taskDetails.createTask(Task( null , binding.titleInput.text.toString(), binding.descriptionInput.text.toString()))
-
+                binding.titleInput.onEditorAction(EditorInfo.IME_ACTION_DONE)
+                binding.descriptionInput.onEditorAction(EditorInfo.IME_ACTION_DONE)
                 v.findNavController().navigate(R.id.action_createTaskFragment_to_swipeView)
 
             }
