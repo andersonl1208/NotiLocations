@@ -2,6 +2,7 @@ package com.notilocations.database
 
 import android.app.Application
 import androidx.lifecycle.LiveData
+import com.notilocations.NotiLocationTask
 import java.util.concurrent.Executor
 import java.util.concurrent.Executors
 
@@ -170,7 +171,7 @@ class NotiLocationsRepository private constructor(app: Application) {
      */
     fun createTask(task: Task) {
         executor.execute {
-            taskDao.insertAll(task)
+            taskDao.insert(task)
         }
     }
 
@@ -200,7 +201,7 @@ class NotiLocationsRepository private constructor(app: Application) {
      */
     fun createLocation(location: Location) {
         executor.execute {
-            locationDao.insertAll(location)
+            locationDao.insert(location)
         }
     }
 
@@ -230,7 +231,7 @@ class NotiLocationsRepository private constructor(app: Application) {
      */
     fun createLocationTask(locationTask: LocationTask) {
         executor.execute {
-            locationTaskDao.insertAll(locationTask)
+            locationTaskDao.insert(locationTask)
         }
     }
 
@@ -254,6 +255,28 @@ class NotiLocationsRepository private constructor(app: Application) {
         }
     }
 
+    fun syncNotiLocationTask(notiLocationTask: NotiLocationTask) {
+        executor.execute {
+            if (notiLocationTask.hasLocationId()) {
+                locationDao.update(notiLocationTask.getDatabaseLocation())
+            } else {
+                notiLocationTask.location?.locationId =
+                    locationDao.insert(notiLocationTask.getDatabaseLocation())
+            }
+
+            if (notiLocationTask.hasTaskId()) {
+                taskDao.update(notiLocationTask.getDatabaseTask())
+            } else {
+                notiLocationTask.task?.taskId = taskDao.insert(notiLocationTask.getDatabaseTask())
+            }
+
+            if (notiLocationTask.hasLocationTaskId()) {
+                locationTaskDao.update(notiLocationTask.getDatabaseLocationTask())
+            } else {
+                locationTaskDao.insert(notiLocationTask.getDatabaseLocationTask())
+            }
+        }
+    }
 
     /**
      * Companion object that returns an instance of the sub repository class, allowing it to be used as a Singleton.

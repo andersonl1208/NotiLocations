@@ -17,8 +17,10 @@
             android:id="@+id/action_createTaskFragment_to_mapsFragment"
             app:destination="@id/mapsFragment" />
         <argument
-            android:name="position"
-            app:argType="long" />
+            android:name="notiLocationTask"
+            app:argType="com.notilocations.NotiLocationTask"
+            app:nullable="true"
+            android:defaultValue="@null" />
     </fragment>
     <fragment
         android:id="@+id/swipeView"
@@ -32,18 +34,6 @@
             android:id="@+id/action_swipeView_to_settingsFragment"
             app:destination="@id/settingsFragment" />
         <action
-            android:id="@+id/action_swipeView_to_updateTaskFragment"
-            app:destination="@id/updateTaskFragment" />
-        <argument
-            android:name="updatedTitle"
-            app:argType="string" />
-        <argument
-            android:name="updatedDescription"
-            app:argType="string" />
-        <argument
-            android:name="position"
-            app:argType="long" />
-        <action
             android:id="@+id/action_swipeView_to_aboutFragment2"
             app:destination="@id/aboutFragment2"
             app:launchSingleTop="false" />
@@ -52,38 +42,23 @@
         android:id="@+id/mapsFragment"
         android:name="com.notilocations.MapsFragment"
         android:label="fragment_maps"
-        tools:layout="@layout/fragment_maps" >
+        tools:layout="@layout/fragment_maps">
         <action
             android:id="@+id/action_mapsFragment_to_createTaskFragment"
             app:destination="@id/createTaskFragment" />
+        <argument
+            android:name="notiLocationTask"
+            app:argType="com.notilocations.NotiLocationTask"
+            app:nullable="true"
+            android:defaultValue="@null" />
         <action
-            android:id="@+id/action_mapsFragment_to_updateTaskFragment"
-            app:destination="@id/updateTaskFragment" />
+            android:id="@+id/action_mapsFragment_to_swipeView"
+            app:destination="@id/swipeView" />
     </fragment>
     <fragment
         android:id="@+id/settingsFragment"
         android:name="com.notilocations.SettingsFragment"
         android:label="SettingsFragment" />
-    <fragment
-        android:id="@+id/updateTaskFragment"
-        android:name="com.notilocations.UpdateTaskFragment"
-        android:label="UpdateTaskFragment" >
-        <action
-            android:id="@+id/action_updateTaskFragment_to_swipeView"
-            app:destination="@id/swipeView" />
-        <action
-            android:id="@+id/action_updateTaskFragment_to_mapsFragment"
-            app:destination="@id/mapsFragment" />
-        <argument
-            android:name="title"
-            app:argType="string" />
-        <argument
-            android:name="description"
-            app:argType="string" />
-        <argument
-            android:name="position"
-            app:argType="long" />
-    </fragment>
     <fragment
         android:id="@+id/aboutFragment2"
         android:name="com.notilocations.AboutFragment"

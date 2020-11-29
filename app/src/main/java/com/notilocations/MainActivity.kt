@@ -50,7 +50,7 @@ class MainActivity : AppCompatActivity() {
 
         createNotificationChannel()
 
-        val viewModel = ViewModelProvider(this).get(NotiLocationsViewModel::class.java)
+        //val viewModel = ViewModelProvider(this).get(NotiLocationsViewModel::class.java)
 
         //viewModel.createLocation(Location(45, "Test location", 44.872978, -91.929399))
         //viewModel.createTask(Task(45, "Test notification", "Test longer description. I don't know what I'm doing but it seems promising!"))
@@ -123,12 +123,10 @@ class MainActivity : AppCompatActivity() {
 
             val geofences = mutableListOf<Geofence>()
 
-            if (activeLocationTasks != null) {
-                for (locationTask in activeLocationTasks) {
-                    val geofence = createGeofence(locationTask)
-                    if (geofence != null) {
-                        geofences.add(geofence)
-                    }
+            for (locationTask in activeLocationTasks) {
+                val geofence = createGeofence(locationTask)
+                if (geofence != null) {
+                    geofences.add(geofence)
                 }
             }
 

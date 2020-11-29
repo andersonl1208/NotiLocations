@@ -26,10 +26,10 @@ interface LocationDao {
 
     /**
      * Inserts a variable number of locations into the database.
-     * @param location A variable number of locations to insert.
+     * @param location The location to insert.
      */
     @Insert
-    fun insertAll(vararg location: Location?)
+    fun insert(location: Location?): Long
 
     /**
      * Deletes a location from the database.

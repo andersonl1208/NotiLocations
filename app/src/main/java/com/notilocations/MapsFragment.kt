@@ -4,19 +4,27 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.findNavController
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
-import com.notilocations.database.Location
+import com.notilocations.databinding.FragmentMapsBinding
 
 class MapsFragment : Fragment(), OnMapReadyCallback {
 
-    private lateinit var map: GoogleMap;
+    private lateinit var map: GoogleMap
+
+    private lateinit var currentView: View
+
+    private lateinit var binding: FragmentMapsBinding
+
+    //private val args: NotiLocationTask? =
 
     private val callback = OnMapReadyCallback { googleMap ->
         map = googleMap
@@ -27,15 +35,49 @@ class MapsFragment : Fragment(), OnMapReadyCallback {
                 println("NotiLocation: " + latLng.latitude + "\t" + latLng.longitude)
 
                 val viewModel = ViewModelProvider(this).get(NotiLocationsViewModel::class.java)
-                val newLocation = Location(null, null, latLng.latitude, latLng.longitude)
-                viewModel.createLocation(newLocation)
 
                 val tempMarker = latLng
                 googleMap.addMarker(MarkerOptions().position(tempMarker).title("Luke's House"))
                 googleMap.moveCamera(CameraUpdateFactory.newLatLng(tempMarker))
-            }
-         }
 
+                val notiLocationTask = if (arguments == null) {
+                    null
+                } else {
+                    MapsFragmentArgs.fromBundle(requireArguments()).notiLocationTask
+                }
+
+                if (notiLocationTask != null) {
+                    if (notiLocationTask.hasLocation()) {
+                        notiLocationTask.location?.lat = latLng.latitude
+                        notiLocationTask.location?.lng = latLng.longitude
+                    } else {
+                        notiLocationTask.location =
+                            NotiLocation(null, "", latLng.latitude, latLng.longitude)
+                    }
+
+                    if (notiLocationTask.hasTask()) {
+                        viewModel.syncNotiLocationTask(notiLocationTask)
+                        currentView.findNavController()
+                            .navigate(R.id.action_mapsFragment_to_swipeView)
+                    } else {
+
+                        val action =
+                            SwipeViewFragmentDirections.actionSwipeViewToCreateTaskFragment(
+                                notiLocationTask
+                            )
+                        currentView.findNavController().navigate(action)
+                    }
+
+                } else {
+                    val newLocation = NotiLocation(null, null, latLng.latitude, latLng.longitude)
+                    val newNotiLocationTask = NotiLocationTask(location = newLocation)
+                    val action = SwipeViewFragmentDirections.actionSwipeViewToCreateTaskFragment(
+                        newNotiLocationTask
+                    )
+                    currentView.findNavController().navigate(action)
+                }
+            }
+        }
 
 //        enableMyLocation()
 
@@ -67,12 +109,16 @@ class MapsFragment : Fragment(), OnMapReadyCallback {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+        binding = DataBindingUtil.inflate(
+            inflater, R.layout.fragment_maps, container, false
+        )
 
-        return inflater.inflate(R.layout.fragment_maps, container, false)
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        currentView = view
         val mapFragment = childFragmentManager.findFragmentById(R.id.map) as SupportMapFragment?
         mapFragment?.getMapAsync(callback)
 

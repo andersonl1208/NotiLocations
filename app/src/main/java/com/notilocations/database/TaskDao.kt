@@ -29,7 +29,7 @@ interface TaskDao {
      * @param task A variable number of tasks to insert.
      */
     @Insert
-    fun insertAll(vararg task: Task?)
+    fun insert(task: Task?): Long
 
     /**
      * Deletes a task from the database.

@@ -89,7 +89,7 @@ interface LocationTaskDao {
      * @param locationTask A variable number of location tasks to insert.
      */
     @Insert
-    fun insertAll(vararg locationTask: LocationTask?)
+    fun insert(locationTask: LocationTask?): Long
 
     /**
      * Deletes a location task from the database.
