@@ -11,6 +11,7 @@ import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.app.ActivityCompat
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProvider
@@ -40,10 +41,19 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+
+
         geofencingClient = LocationServices.getGeofencingClient(this)
 
         val binding =
             DataBindingUtil.setContentView<ActivityMainBinding>(this, R.layout.activity_main)
+        val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this)
+
+        if (sharedPreferences?.getBoolean("dark_theme", false) == true) {
+            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
+        } else {
+            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
+        }
 
 //        val navController = this.findNavController(R.id.navHostFragment)
 //        NavigationUI.setupActionBarWithNavController(this, navController)
@@ -151,10 +161,10 @@ class MainActivity : AppCompatActivity() {
 
     private fun createGeofence(fullLocationTask: FullLocationTask): Geofence? {
         val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this)
-        val radius = fullLocationTask.locationTask.distance ?: sharedPreferences.getFloat(
+        val radius = fullLocationTask.locationTask.distance ?: sharedPreferences.getInt(
             "distance",
-            1.0F
-        ) * 1609
+            1
+        ) * 1609.0F
         return Geofence.Builder()
             .setRequestId(fullLocationTask.locationTask.id.toString())
             .setCircularRegion(fullLocationTask.location.lat, fullLocationTask.location.lng, radius)
