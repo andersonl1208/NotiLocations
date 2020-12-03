@@ -4,7 +4,7 @@
 
     <SwitchPreferenceCompat
         android:key="dark_theme"
-        android:title="Enable Dark Theme" />
+        android:title="Enable dark theme" />
 
     <SwitchPreferenceCompat
         android:key="voice_notification"
