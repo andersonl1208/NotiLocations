@@ -96,7 +96,66 @@
             android:text="@string/addLocation"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/triggerOnExitInput" />
+
+        <TextView
+            android:id="@+id/distanceTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/padding"
+            android:text="@string/triggerDistanceText"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="@+id/taskDescription"
             app:layout_constraintTop_toBottomOf="@+id/description_input" />
+
+        <EditText
+            android:id="@+id/distanceInput"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/padding"
+            android:layout_marginTop="@dimen/padding"
+            android:layout_marginEnd="@dimen/padding"
+            android:inputType="numberDecimal"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/distanceTextView" />
+
+        <TextView
+            android:id="@+id/maxSpeedTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/padding"
+            android:text="@string/triggerSpeedText"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="@+id/distanceTextView"
+            app:layout_constraintTop_toBottomOf="@+id/distanceInput" />
+
+        <EditText
+            android:id="@+id/maxSpeedInput"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/padding"
+            android:layout_marginTop="@dimen/padding"
+            android:layout_marginEnd="@dimen/padding"
+            android:inputType="number"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/maxSpeedTextView" />
+
+        <androidx.appcompat.widget.SwitchCompat
+            android:id="@+id/triggerOnExitInput"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/padding"
+            android:checked="false"
+            android:text="@string/triggerOnExitText"
+            android:textColor="@android:color/secondary_text_material_light"
+            app:layout_constraintStart_toStartOf="@+id/maxSpeedTextView"
+            app:layout_constraintTop_toBottomOf="@+id/maxSpeedInput" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

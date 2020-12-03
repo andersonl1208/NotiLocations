@@ -9,7 +9,7 @@ import androidx.room.TypeConverters
 /**
  * The NotiLocations database class.
  */
-@Database(entities = [Location::class, LocationTask::class, Task::class], version = 3)
+@Database(entities = [Location::class, LocationTask::class, Task::class], version = 4)
 @TypeConverters(DateConverter::class)
 abstract class NotiLocationsDatabase : RoomDatabase() {
 

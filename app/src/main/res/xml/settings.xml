@@ -4,7 +4,7 @@
 
     <SwitchPreferenceCompat
         android:key="dark_theme"
-        android:title="Enable Dark Theme" />
+        android:title="Enable dark theme" />
 
     <SwitchPreferenceCompat
         android:key="voice_notification"
@@ -12,15 +12,15 @@
 
     <SeekBarPreference
         android:key="distance"
-        android:title="Default distance to trigger notifications"
         android:max="10"
+        android:title="Default distance to trigger notification"
         app:min="1"
         app:showSeekBarValue="true" />
 
     <SeekBarPreference
         android:key="max_speed"
-        android:title="Default max speed for notifications"
         android:max="100"
+        android:title="Default max speed for notification (mph)"
         app:min="25"
         app:showSeekBarValue="true" />
 

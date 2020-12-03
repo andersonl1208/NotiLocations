@@ -44,6 +44,18 @@ class CreateTaskFragment : Fragment() {
                 binding.descriptionInput.setText(notiLocationTask.task?.description)
                 binding.titleInput.hint = notiLocationTask.task?.title
                 binding.descriptionInput.hint = notiLocationTask.task?.description
+
+                if (notiLocationTask.maxSpeed != null) {
+                    binding.maxSpeedInput.setText(notiLocationTask.maxSpeed?.toString())
+                    binding.maxSpeedInput.hint = notiLocationTask.maxSpeed?.toString()
+                }
+
+                if (notiLocationTask.distance != null) {
+                    binding.distanceInput.setText(notiLocationTask.distance?.toString())
+                    binding.distanceInput.hint = notiLocationTask.distance?.toString()
+                }
+
+                binding.triggerOnExitInput.isChecked = notiLocationTask.triggerOnExit
             }
 
             if (notiLocationTask.hasLocationTaskId()) {
@@ -102,6 +114,10 @@ class CreateTaskFragment : Fragment() {
                     )
                 }
 
+                notiLocationTask.maxSpeed = binding.maxSpeedInput.text.toString().toIntOrNull()
+                notiLocationTask.distance = binding.distanceInput.text.toString().toFloatOrNull()
+                notiLocationTask.triggerOnExit = binding.triggerOnExitInput.isChecked
+
                 if (notiLocationTask.hasLocation() && !defaultToMap) {
                     viewModel.syncNotiLocationTask(notiLocationTask)
                     v.findNavController().navigate(R.id.action_createTaskFragment_to_swipeView)
@@ -118,8 +134,15 @@ class CreateTaskFragment : Fragment() {
                     null,
                     binding.titleInput.text.toString(),
                     binding.descriptionInput.text.toString()
+
                 )
-                val newNotiLocationTask = NotiLocationTask(task = newTask)
+                val newNotiLocationTask = NotiLocationTask(
+                    maxSpeed = binding.maxSpeedInput.text.toString().toIntOrNull(),
+                    distance = binding.distanceInput.text.toString().toFloatOrNull(),
+                    triggerOnExit = binding.triggerOnExitInput.isChecked,
+                    task = newTask
+                )
+
                 val action = CreateTaskFragmentDirections.actionCreateTaskFragmentToMapsFragment(
                     newNotiLocationTask
                 )

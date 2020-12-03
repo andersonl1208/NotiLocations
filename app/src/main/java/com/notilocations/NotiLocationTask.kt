@@ -15,6 +15,7 @@ data class NotiLocationTask(
     var maxSpeed: Int? = null,
     var creationDate: Date = Date(),
     var isCompleted: Boolean = false,
+    var triggerOnExit: Boolean = false,
 
     var location: NotiLocation? = null,
     var task: NotiTask? = null
@@ -65,7 +66,8 @@ data class NotiLocationTask(
                 distance,
                 maxSpeed,
                 creationDate,
-                isCompleted
+                isCompleted,
+                triggerOnExit
             )
         }
 
@@ -95,6 +97,7 @@ data class NotiLocationTask(
                     fullLocationTask.locationTask.maxSpeed,
                     fullLocationTask.locationTask.creationDate,
                     fullLocationTask.locationTask.isCompleted,
+                    fullLocationTask.locationTask.triggerOnExit,
                     location,
                     task
                 )

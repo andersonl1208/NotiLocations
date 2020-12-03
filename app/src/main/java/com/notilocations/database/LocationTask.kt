@@ -46,5 +46,8 @@ data class LocationTask(
     val creationDate: Date,
 
     @ColumnInfo(name = "is_completed")
-    val isCompleted: Boolean
+    val isCompleted: Boolean,
+
+    @ColumnInfo(name = "trigger_on_exit")
+    val triggerOnExit: Boolean
 )
