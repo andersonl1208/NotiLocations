@@ -51,12 +51,17 @@ class GeofenceJobIntentService : JobIntentService() {
 
                     val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this)
 
+                    val defaultMaxSpeed =
+                        if (sharedPreferences.getBoolean("max_speed_enabled", false)) {
+                            sharedPreferences.getFloat("max_speed", Float.MAX_VALUE)
+                        } else {
+                            Float.MAX_VALUE
+                        }
+
                     for (locationTask in locationTasks) {
+
                         val maxSpeed: Float =
-                            locationTask.locationTask.distance ?: sharedPreferences.getFloat(
-                                "max_speed",
-                                Float.MAX_VALUE
-                            )
+                            locationTask.locationTask.distance ?: defaultMaxSpeed
 
                         if (location.speed * METERS_SEC_TO_MILES_HOUR < maxSpeed) {
                             sendNotification(locationTask)

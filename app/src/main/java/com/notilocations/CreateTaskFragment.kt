@@ -34,6 +34,8 @@ class CreateTaskFragment : Fragment() {
         val notiLocationTask =
             CreateTaskFragmentArgs.fromBundle(requireArguments()).notiLocationTask
 
+        binding.maxSpeedInput.isEnabled = false
+
         if (notiLocationTask != null) {
             if (notiLocationTask.hasLocation()) {
                 binding.addLocation.text = getString(R.string.updateLocation)
@@ -46,8 +48,9 @@ class CreateTaskFragment : Fragment() {
                 binding.descriptionInput.hint = notiLocationTask.task?.description
 
                 if (notiLocationTask.maxSpeed != null) {
-                    binding.maxSpeedInput.setText(notiLocationTask.maxSpeed?.toString())
-                    binding.maxSpeedInput.hint = notiLocationTask.maxSpeed?.toString()
+                    binding.maxSpeedEnabledInput.isChecked = true
+                    binding.maxSpeedInput.isEnabled = true
+                    binding.maxSpeedInput.progress = notiLocationTask.maxSpeed ?: 0
                 }
 
                 if (notiLocationTask.distance != null) {
@@ -78,6 +81,16 @@ class CreateTaskFragment : Fragment() {
             binding.deleteButton.visibility = View.INVISIBLE
         }
 
+        createOnClickListeners(notiLocationTask)
+
+        return binding.root
+    }
+
+    private fun createOnClickListeners(notiLocationTask: NotiLocationTask?) {
+        binding.maxSpeedEnabledInput.setOnClickListener {
+            binding.maxSpeedInput.isEnabled = binding.maxSpeedEnabledInput.isChecked
+        }
+
         binding.addLocation.setOnClickListener { v: View ->
             navigateListener(v, notiLocationTask, true)
         }
@@ -85,8 +98,6 @@ class CreateTaskFragment : Fragment() {
         binding.submitTask.setOnClickListener { v: View ->
             navigateListener(v, notiLocationTask, false)
         }
-
-        return binding.root
     }
 
     private fun navigateListener(
@@ -114,7 +125,12 @@ class CreateTaskFragment : Fragment() {
                     )
                 }
 
-                notiLocationTask.maxSpeed = binding.maxSpeedInput.text.toString().toIntOrNull()
+
+                notiLocationTask.maxSpeed = if (binding.maxSpeedEnabledInput.isChecked) {
+                    binding.maxSpeedInput.progress
+                } else {
+                    null
+                }
                 notiLocationTask.distance = binding.distanceInput.text.toString().toFloatOrNull()
                 notiLocationTask.triggerOnExit = binding.triggerOnExitInput.isChecked
 
@@ -137,7 +153,11 @@ class CreateTaskFragment : Fragment() {
 
                 )
                 val newNotiLocationTask = NotiLocationTask(
-                    maxSpeed = binding.maxSpeedInput.text.toString().toIntOrNull(),
+                    maxSpeed = if (binding.maxSpeedEnabledInput.isChecked) {
+                        binding.maxSpeedInput.progress
+                    } else {
+                        null
+                    },
                     distance = binding.distanceInput.text.toString().toFloatOrNull(),
                     triggerOnExit = binding.triggerOnExitInput.isChecked,
                     task = newTask

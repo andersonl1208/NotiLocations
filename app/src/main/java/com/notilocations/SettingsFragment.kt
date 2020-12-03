@@ -2,8 +2,12 @@ package com.notilocations
 
 import android.content.SharedPreferences
 import android.os.Bundle
+import android.text.InputType
 import androidx.appcompat.app.AppCompatDelegate
+import androidx.preference.EditTextPreference
 import androidx.preference.PreferenceFragmentCompat
+import androidx.preference.PreferenceManager
+import androidx.preference.SeekBarPreference
 
 /**
  * Shows the user the settings screen.
@@ -18,6 +22,16 @@ class SettingsFragment : PreferenceFragmentCompat(),
      */
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
         setPreferencesFromResource(R.xml.settings, rootKey)
+        val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this.requireContext())
+        findPreference<SeekBarPreference>("max_speed")?.isEnabled =
+            sharedPreferences?.getBoolean("max_speed_enabled", false) ?: false
+
+        val defaultDistancePreference: EditTextPreference? = findPreference("distance")
+
+        defaultDistancePreference?.setOnBindEditTextListener { editText ->
+            editText.inputType = InputType.TYPE_CLASS_NUMBER or InputType.TYPE_NUMBER_FLAG_DECIMAL
+        }
+
     }
 
     override fun onResume() {
@@ -39,6 +53,31 @@ class SettingsFragment : PreferenceFragmentCompat(),
                 AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
                 activity?.recreate()
             }
+        } else if (key == "max_speed_enabled") {
+            findPreference<SeekBarPreference>("max_speed")?.isEnabled =
+                sharedPreferences?.getBoolean(key, false) ?: false
         }
     }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

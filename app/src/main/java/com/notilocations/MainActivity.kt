@@ -162,10 +162,9 @@ class MainActivity : AppCompatActivity() {
     private fun createGeofence(fullLocationTask: FullLocationTask): Geofence? {
         val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this)
 
-        val radius = fullLocationTask.locationTask.distance ?: sharedPreferences.getInt(
-            "distance",
-            1
-        ) * 1609.0F
+        val radius =
+            (fullLocationTask.locationTask.distance ?: sharedPreferences.getString("distance", "")
+                ?.toFloatOrNull() ?: 1.0F) * 1609.0F
 
         val transitionType = if (fullLocationTask.locationTask.triggerOnExit) {
             Geofence.GEOFENCE_TRANSITION_EXIT
