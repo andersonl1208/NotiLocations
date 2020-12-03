@@ -153,7 +153,7 @@
             android:layout_marginTop="@dimen/padding"
             android:checked="false"
             android:text="@string/triggerOnExitText"
-            android:textColor="@android:color/secondary_text_material_light"
+            android:textColor="@color/secondary_text_material_light"
             app:layout_constraintStart_toStartOf="@+id/maxSpeedTextView"
             app:layout_constraintTop_toBottomOf="@+id/maxSpeedInput" />
 

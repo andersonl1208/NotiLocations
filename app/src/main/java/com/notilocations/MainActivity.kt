@@ -161,21 +161,29 @@ class MainActivity : AppCompatActivity() {
 
     private fun createGeofence(fullLocationTask: FullLocationTask): Geofence? {
         val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this)
+
         val radius = fullLocationTask.locationTask.distance ?: sharedPreferences.getInt(
             "distance",
             1
         ) * 1609.0F
+
+        val transitionType = if (fullLocationTask.locationTask.triggerOnExit) {
+            Geofence.GEOFENCE_TRANSITION_EXIT
+        } else {
+            Geofence.GEOFENCE_TRANSITION_ENTER
+        }
+
         return Geofence.Builder()
             .setRequestId(fullLocationTask.locationTask.id.toString())
             .setCircularRegion(fullLocationTask.location.lat, fullLocationTask.location.lng, radius)
-            .setTransitionTypes(Geofence.GEOFENCE_TRANSITION_ENTER)
+            .setTransitionTypes(transitionType)
             .setExpirationDuration(Geofence.NEVER_EXPIRE)
             .build()
     }
 
     private fun createGeofencingRequest(geofences: List<Geofence>): GeofencingRequest {
         return GeofencingRequest.Builder().apply {
-            setInitialTrigger(GeofencingRequest.INITIAL_TRIGGER_ENTER)
+            setInitialTrigger(0)
             addGeofences(geofences)
         }.build()
     }
