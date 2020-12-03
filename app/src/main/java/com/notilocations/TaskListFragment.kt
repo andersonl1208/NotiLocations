@@ -4,6 +4,8 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.view.isEmpty
+import androidx.core.view.isNotEmpty
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
@@ -13,6 +15,7 @@ import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.notilocations.database.FullLocationTask
 import com.notilocations.databinding.FragmentTaskListBinding
+import kotlinx.android.synthetic.main.fragment_task_list.*
 
 class TaskListFragment : Fragment() {
     override fun onCreateView(
@@ -35,14 +38,22 @@ class TaskListFragment : Fragment() {
             layoutManager = recyclerLayout
             adapter = recyclerAdapter
         }
+
         val viewModel = ViewModelProvider(this).get(NotiLocationsViewModel::class.java)
         viewModel.getActiveFullLocationTasks()
             .observe(this.viewLifecycleOwner, object : Observer<List<FullLocationTask>> {
                 private val adapter = recyclerAdapter
-
                 override fun onChanged(t: List<FullLocationTask>?) {
                     if (t != null) {
                         adapter.setLocationTasks(t)
+                        if(adapter.itemCount == 0){
+                            binding.addTaskText.visibility = View.VISIBLE
+                            binding.taskRecycler.visibility = View.GONE
+                        }
+                        else{
+                            binding.addTaskText.visibility = View.GONE
+                            binding.taskRecycler.visibility = View.VISIBLE
+                        }
                     }
                 }
             })
@@ -55,10 +66,12 @@ class TaskListFragment : Fragment() {
             val action = SwipeViewFragmentDirections.actionSwipeViewToCreateTaskFragment()
             v.findNavController().navigate(action)
         }
+
         binding.settingButton.setOnClickListener { v: View ->
             val action = SwipeViewFragmentDirections.actionSwipeViewToSettingsFragment()
             v.findNavController().navigate(action)
         }
+
         return binding.root
     }
 }

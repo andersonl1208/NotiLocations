@@ -31,5 +31,8 @@
     <string name="triggerOnExitText">Trigger notification on exiting location</string>
     <string name="snackbarItemRemoved">1 item removed</string>
     <string name="snackbarUndo">UNDO</string>
+    <string name="settingsDescription">Go to settings</string>
+    <string name="addDescription">Add a task</string>
+    <string name="addATask">Task list is empty</string>
 
 </resources>
