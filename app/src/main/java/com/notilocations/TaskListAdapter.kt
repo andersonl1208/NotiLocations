@@ -5,12 +5,16 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.findNavController
 import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.snackbar.Snackbar
 import com.notilocations.database.FullLocationTask
+import com.notilocations.database.LocationTask
 
 
-class TaskListAdapter : RecyclerView.Adapter<TaskListAdapter.TaskHolder>() {
+class TaskListAdapter(val fragment: TaskListFragment) :
+    RecyclerView.Adapter<TaskListAdapter.TaskHolder>() {
     private var locationTasks: List<FullLocationTask>? = null
     private val bundle = Bundle()
 
@@ -19,6 +23,35 @@ class TaskListAdapter : RecyclerView.Adapter<TaskListAdapter.TaskHolder>() {
     fun setLocationTasks(locationTaskList: List<FullLocationTask>) {
         locationTasks = locationTaskList
         notifyDataSetChanged()
+    }
+
+    fun removeLocationTask(position: Int) {
+        if (position >= 0 && position < locationTasks?.size ?: -1) {
+            val locationTaskToRemove = locationTasks?.elementAt(position)
+            val viewModel: NotiLocationsViewModel =
+                ViewModelProvider(fragment).get(NotiLocationsViewModel::class.java)
+            if (locationTaskToRemove != null) {
+                viewModel.deleteLocationTask(locationTaskToRemove.locationTask)
+                showUndoSnackbar(locationTaskToRemove.locationTask)
+            }
+        }
+    }
+
+    private fun showUndoSnackbar(removedLocationTask: LocationTask) {
+
+        val snackbar = Snackbar.make(
+            fragment.requireView(),
+            R.string.snackbarItemRemoved,
+            Snackbar.LENGTH_LONG
+        )
+
+        snackbar.setAction(R.string.snackbarUndo, fun(_) {
+            val viewModel: NotiLocationsViewModel =
+                ViewModelProvider(fragment).get(NotiLocationsViewModel::class.java)
+            viewModel.createLocationTask(removedLocationTask)
+        })
+
+        snackbar.show()
     }
 
     override fun getItemCount(): Int {

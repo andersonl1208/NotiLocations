@@ -9,6 +9,7 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.findNavController
+import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.notilocations.database.FullLocationTask
 import com.notilocations.databinding.FragmentTaskListBinding
@@ -27,7 +28,7 @@ class TaskListFragment : Fragment() {
         )
 
         val recyclerLayout = LinearLayoutManager(this.context)
-        val recyclerAdapter = TaskListAdapter()
+        val recyclerAdapter = TaskListAdapter(this)
 
         binding.taskRecycler.apply {
             setHasFixedSize(true)
@@ -45,11 +46,16 @@ class TaskListFragment : Fragment() {
                     }
                 }
             })
+
+        val swipeHandler = SwipeToDeleteCallback(requireContext(), recyclerAdapter)
+        val itemTouchHelper = ItemTouchHelper(swipeHandler)
+        itemTouchHelper.attachToRecyclerView(binding.taskRecycler)
+
         binding.addTask.setOnClickListener { v: View ->
             val action = SwipeViewFragmentDirections.actionSwipeViewToCreateTaskFragment()
             v.findNavController().navigate(action)
         }
-        binding.settingButton.setOnClickListener{v: View ->
+        binding.settingButton.setOnClickListener { v: View ->
             val action = SwipeViewFragmentDirections.actionSwipeViewToSettingsFragment()
             v.findNavController().navigate(action)
         }

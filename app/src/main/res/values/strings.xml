@@ -29,5 +29,7 @@
     <string name="triggerDistanceText">Distance in miles to trigger notification</string>
     <string name="triggerSpeedText">Max speed in miles at which to trigger notification</string>
     <string name="triggerOnExitText">Trigger notification on exiting location</string>
+    <string name="snackbarItemRemoved">1 item removed</string>
+    <string name="snackbarUndo">UNDO</string>
 
 </resources>
