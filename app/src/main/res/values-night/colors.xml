@@ -14,5 +14,5 @@
     <color name="gray">@color/Black</color>
     <color name="darkSurface">#121212</color>
     <color name="Black">#000000</color>
-    <color name="secondary_text_material_light">#8a000000</color>
+    <color name="secondary_text_material_light">#808080</color>
 </resources>
