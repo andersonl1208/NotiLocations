@@ -27,7 +27,7 @@
             android:key="max_speed"
             android:max="@integer/speed_max"
             android:title="Max speed for notification"
-            app:defaultValue="10"
+            app:defaultValue="true"
             app:min="@integer/speed_min"
             app:showSeekBarValue="true"
             app:summary="Default max speed at which a notification will be triggered (mph)" />
