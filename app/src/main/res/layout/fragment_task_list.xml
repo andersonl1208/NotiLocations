@@ -17,7 +17,7 @@
             android:layout_marginEnd="@dimen/padding"
             android:layout_marginBottom="@dimen/padding"
             android:contentDescription="@string/settingsDescription"
-            android:src="@android:drawable/ic_menu_preferences"
+            android:src="@mipmap/gear_icon"
             android:text="@string/add_task"
             app:backgroundTint="@color/weldonBlue"
             app:layout_constraintBottom_toBottomOf="parent"

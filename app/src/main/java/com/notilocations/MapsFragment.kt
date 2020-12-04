@@ -79,7 +79,6 @@ class MapsFragment : Fragment(), OnMapReadyCallback {
             }
         }
 
-//        enableMyLocation()
 
 
         val tempLocation = LatLng(44.87335854645772, -91.9216525554657)
