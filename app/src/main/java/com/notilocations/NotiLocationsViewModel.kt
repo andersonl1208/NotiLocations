@@ -203,4 +203,8 @@ class NotiLocationsViewModel(app: Application) : AndroidViewModel(app) {
     fun updateLocationTask(locationTask: LocationTask) {
         repository.updateLocationTask(locationTask)
     }
+
+    fun syncNotiLocationTask(notiLocationTask: NotiLocationTask) {
+        repository.syncNotiLocationTask(notiLocationTask)
+    }
 }

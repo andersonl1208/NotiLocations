@@ -2,26 +2,35 @@
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <SwitchPreferenceCompat
-        android:key="dark_theme"
-        android:title="Enable Dark Theme" />
+    <PreferenceCategory android:title="General">
 
-    <SwitchPreferenceCompat
-        android:key="voice_notification"
-        android:title="Read notifications aloud" />
+        <SwitchPreferenceCompat
+            android:key="dark_theme"
+            android:title="Enable dark theme" />
+        <SwitchPreferenceCompat
+            android:key="voice_notification"
+            android:title="Read notifications aloud" />
+        <EditTextPreference
+            android:key="distance"
+            android:title="Set default distance to trigger notification (miles)"
+            app:useSimpleSummaryProvider="true" />
+    </PreferenceCategory>
 
-    <SeekBarPreference
-        android:key="distance"
-        android:title="Default distance to trigger notifications"
-        android:max="10"
-        app:min="1"
-        app:showSeekBarValue="true" />
+    <PreferenceCategory android:title="Max speed for notification">
 
-    <SeekBarPreference
-        android:key="max_speed"
-        android:title="Default max speed for notifications"
-        android:max="100"
-        app:min="25"
-        app:showSeekBarValue="true" />
+        <SwitchPreference
+            android:defaultValue="false"
+            android:key="max_speed_enabled"
+            android:title="Enable default max speed"
+            app:summary="Enable default max speed for notification" />
+        <SeekBarPreference
+            android:key="max_speed"
+            android:max="@integer/speed_max"
+            android:title="Max speed for notification"
+            app:defaultValue="10"
+            app:min="@integer/speed_min"
+            app:showSeekBarValue="true"
+            app:summary="Default max speed at which a notification will be triggered (mph)" />
+    </PreferenceCategory>
 
 </PreferenceScreen>

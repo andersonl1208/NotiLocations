@@ -76,6 +76,18 @@
             app:layout_constraintHorizontal_bias="1.0"
             app:layout_constraintStart_toStartOf="parent" />
 
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/deleteButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginBottom="16dp"
+            android:backgroundTint="@color/weldonBlue"
+            android:src="@drawable/ic_baseline_delete_forever_24"
+            android:text="@string/deleteButton"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
+
         <Button
             android:id="@+id/addLocation"
             android:layout_width="wrap_content"
@@ -84,7 +96,69 @@
             android:text="@string/addLocation"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/triggerOnExitInput" />
+
+        <TextView
+            android:id="@+id/distanceTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/padding"
+            android:text="@string/triggerDistanceText"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="@+id/taskDescription"
             app:layout_constraintTop_toBottomOf="@+id/description_input" />
+
+        <EditText
+            android:id="@+id/distanceInput"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/padding"
+            android:layout_marginTop="@dimen/padding"
+            android:layout_marginEnd="@dimen/padding"
+            android:inputType="numberDecimal"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/distanceTextView" />
+
+        <androidx.appcompat.widget.SwitchCompat
+            android:id="@+id/maxSpeedEnabledInput"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/padding"
+            android:checked="false"
+            android:text="@string/triggerSpeedText"
+            android:textColor="@color/secondary_text_material_light"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="@+id/distanceTextView"
+            app:layout_constraintTop_toBottomOf="@+id/distanceInput" />
+
+        <SeekBar
+            android:id="@+id/maxSpeedInput"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/padding"
+            android:layout_marginTop="@dimen/padding"
+            android:layout_marginEnd="@dimen/padding"
+            android:max="@integer/speed_max"
+            android:visibility="visible"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/maxSpeedEnabledInput" />
+
+        <androidx.appcompat.widget.SwitchCompat
+            android:id="@+id/triggerOnExitInput"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/padding"
+            android:checked="false"
+            android:text="@string/triggerOnExitText"
+            android:textColor="@color/secondary_text_material_light"
+            app:layout_constraintStart_toStartOf="@+id/maxSpeedEnabledInput"
+            app:layout_constraintTop_toBottomOf="@+id/maxSpeedInput" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

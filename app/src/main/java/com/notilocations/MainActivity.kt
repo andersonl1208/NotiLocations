@@ -11,6 +11,7 @@ import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.app.ActivityCompat
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProvider
@@ -40,17 +41,26 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+
+
         geofencingClient = LocationServices.getGeofencingClient(this)
 
         val binding =
             DataBindingUtil.setContentView<ActivityMainBinding>(this, R.layout.activity_main)
+        val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this)
+
+        if (sharedPreferences?.getBoolean("dark_theme", false) == true) {
+            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
+        } else {
+            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
+        }
 
 //        val navController = this.findNavController(R.id.navHostFragment)
 //        NavigationUI.setupActionBarWithNavController(this, navController)
 
         createNotificationChannel()
 
-        val viewModel = ViewModelProvider(this).get(NotiLocationsViewModel::class.java)
+        //val viewModel = ViewModelProvider(this).get(NotiLocationsViewModel::class.java)
 
         //viewModel.createLocation(Location(45, "Test location", 44.872978, -91.929399))
         //viewModel.createTask(Task(45, "Test notification", "Test longer description. I don't know what I'm doing but it seems promising!"))
@@ -123,12 +133,10 @@ class MainActivity : AppCompatActivity() {
 
             val geofences = mutableListOf<Geofence>()
 
-            if (activeLocationTasks != null) {
-                for (locationTask in activeLocationTasks) {
-                    val geofence = createGeofence(locationTask)
-                    if (geofence != null) {
-                        geofences.add(geofence)
-                    }
+            for (locationTask in activeLocationTasks) {
+                val geofence = createGeofence(locationTask)
+                if (geofence != null) {
+                    geofences.add(geofence)
                 }
             }
 
@@ -153,21 +161,28 @@ class MainActivity : AppCompatActivity() {
 
     private fun createGeofence(fullLocationTask: FullLocationTask): Geofence? {
         val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this)
-        val radius = fullLocationTask.locationTask.distance ?: sharedPreferences.getFloat(
-            "distance",
-            1.0F
-        ) * 1609
+
+        val radius =
+            (fullLocationTask.locationTask.distance ?: sharedPreferences.getString("distance", "")
+                ?.toFloatOrNull() ?: 1.0F) * 1609.0F
+
+        val transitionType = if (fullLocationTask.locationTask.triggerOnExit) {
+            Geofence.GEOFENCE_TRANSITION_EXIT
+        } else {
+            Geofence.GEOFENCE_TRANSITION_ENTER
+        }
+
         return Geofence.Builder()
             .setRequestId(fullLocationTask.locationTask.id.toString())
             .setCircularRegion(fullLocationTask.location.lat, fullLocationTask.location.lng, radius)
-            .setTransitionTypes(Geofence.GEOFENCE_TRANSITION_ENTER)
+            .setTransitionTypes(transitionType)
             .setExpirationDuration(Geofence.NEVER_EXPIRE)
             .build()
     }
 
     private fun createGeofencingRequest(geofences: List<Geofence>): GeofencingRequest {
         return GeofencingRequest.Builder().apply {
-            setInitialTrigger(GeofencingRequest.INITIAL_TRIGGER_ENTER)
+            setInitialTrigger(0)
             addGeofences(geofences)
         }.build()
     }
