@@ -71,6 +71,7 @@ class TaskListFragment : Fragment() {
             val action = SwipeViewFragmentDirections.actionSwipeViewToSettingsFragment()
             v.findNavController().navigate(action)
         }
+
         return binding.root
     }
 }
