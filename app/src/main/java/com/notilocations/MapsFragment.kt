@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import androidx.appcompat.app.AlertDialog
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.findNavController
 import com.google.android.gms.maps.CameraUpdateFactory
@@ -15,6 +16,8 @@ import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
+import com.notilocations.database.FullLocationTask
+import com.notilocations.database.LocationTask
 import com.notilocations.databinding.FragmentMapsBinding
 
 class MapsFragment : Fragment(), OnMapReadyCallback {
@@ -24,6 +27,9 @@ class MapsFragment : Fragment(), OnMapReadyCallback {
     private lateinit var currentView: View
 
     private lateinit var binding: FragmentMapsBinding
+
+//    private lateinit var locations: LiveData<List<FullLocationTask>>
+    private lateinit var locations: List<FullLocationTask>
 
     //private val args: NotiLocationTask? =
 
@@ -47,10 +53,6 @@ class MapsFragment : Fragment(), OnMapReadyCallback {
 
 
                     val viewModel = ViewModelProvider(this).get(NotiLocationsViewModel::class.java)
-
-                    val tempMarker = latLng
-                    googleMap.addMarker(MarkerOptions().position(tempMarker).title("Luke's House"))
-                    googleMap.moveCamera(CameraUpdateFactory.newLatLng(tempMarker))
 
                     val notiLocationTask = if (arguments == null) {
                         null
@@ -94,20 +96,16 @@ class MapsFragment : Fragment(), OnMapReadyCallback {
                 alertDialogBuilder.setNegativeButton(
                         getString(android.R.string.cancel)
                 ) { dialog, _ ->
-                    println("===============Canceled")
                     dialog.cancel()
                 }
 
                 val alertDialog: AlertDialog = alertDialogBuilder.create()
                 alertDialog.show()
 
-
-
-
+                reloadLocations()
 
             }
         }
-
 
 
         val tempLocation = LatLng(44.87335854645772, -91.9216525554657)
@@ -133,31 +131,57 @@ class MapsFragment : Fragment(), OnMapReadyCallback {
     }
 
     override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
+            inflater: LayoutInflater,
+            container: ViewGroup?,
+            savedInstanceState: Bundle?
     ): View? {
         binding = DataBindingUtil.inflate(
-            inflater, R.layout.fragment_maps, container, false
+                inflater, R.layout.fragment_maps, container, false
         )
 
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
         currentView = view
         val mapFragment = childFragmentManager.findFragmentById(R.id.map) as SupportMapFragment?
         mapFragment?.getMapAsync(callback)
+
+        reloadLocations();
 
     }
 
     override fun onMapReady(googleMap: GoogleMap?) {
 
 
-
     }
 
+
+    /**
+     *
+     *
+     */
+    fun reloadLocations() {
+        println("========= Reloading Map")
+        val viewModel = ViewModelProvider(this).get(NotiLocationsViewModel::class.java)
+
+        this.locations = viewModel.getActiveFullLocationTasksStatic();
+
+//        val tempLocations = this.locations
+
+        this.locations.forEach { location ->
+
+            val tempLocation = LatLng(location.location.lat, location.location.lng)
+            this.map.addMarker(MarkerOptions()
+                    .position(tempLocation)
+                    .title(location.location.name)
+
+            ).setTag(location.locationTask.id)
+
+
+        }
+
+    }
 
 
 //    /** Override the onRequestPermissionResult to use EasyPermissions */
