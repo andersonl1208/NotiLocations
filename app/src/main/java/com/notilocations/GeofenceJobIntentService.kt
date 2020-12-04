@@ -93,8 +93,6 @@ class GeofenceJobIntentService : JobIntentService() {
             } catch (e: NumberFormatException) {
                 Log.e("MyLogMessage", e.message ?: "Failed to cast string to a long")
             }
-
-
         }
 
         return locationTasks
