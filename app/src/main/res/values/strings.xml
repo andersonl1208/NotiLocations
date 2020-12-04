@@ -27,7 +27,7 @@
     <string name="primary_notification_channel_description">Notifications for when you are close to a location.</string>
     <string name="primary_notification_channel_id">0</string>
     <string name="triggerDistanceText">Distance in miles to trigger notification</string>
-    <string name="triggerSpeedText">Max speed in miles at which to trigger notification</string>
+    <string name="triggerSpeedText">Max speed to trigger notification (mph)</string>
     <string name="triggerOnExitText">Trigger notification on exiting location</string>
     <string name="snackbarItemRemoved">1 item removed</string>
     <string name="snackbarUndo">UNDO</string>

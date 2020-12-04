@@ -3,7 +3,6 @@
     <color name="colorPrimary">@color/Black</color>-->
     <color name="colorPrimaryDark">@color/darkSurface</color>
     <color name="colorForeground">#FFFFFF</color>
-
     <color name="colorAccent">@color/darkSurface</color>
     <color name="background">#FFFFFF</color>
     <color name="softPink">#FEDBD0</color>
@@ -15,4 +14,5 @@
     <color name="gray">@color/Black</color>
     <color name="darkSurface">#121212</color>
     <color name="Black">#000000</color>
+    <color name="secondary_text_material_light">#8a000000</color>
 </resources>
