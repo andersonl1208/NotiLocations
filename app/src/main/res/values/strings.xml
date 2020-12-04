@@ -34,5 +34,6 @@
     <string name="settingsDescription">Go to settings</string>
     <string name="addDescription">Add a task</string>
     <string name="addATask">Task list is empty</string>
+    <string name="confirmLocation">Confirm Location?</string>
 
 </resources>

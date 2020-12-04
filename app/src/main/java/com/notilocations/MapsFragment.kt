@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.appcompat.app.AlertDialog
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
@@ -34,52 +35,79 @@ class MapsFragment : Fragment(), OnMapReadyCallback {
             if (latLng != null) {
                 println("NotiLocation: " + latLng.latitude + "\t" + latLng.longitude)
 
-                val viewModel = ViewModelProvider(this).get(NotiLocationsViewModel::class.java)
 
-                val tempMarker = latLng
-                googleMap.addMarker(MarkerOptions().position(tempMarker).title("Luke's House"))
-                googleMap.moveCamera(CameraUpdateFactory.newLatLng(tempMarker))
+                val alertDialogBuilder: AlertDialog.Builder = AlertDialog.Builder(requireContext())
+                alertDialogBuilder.setMessage(R.string.confirmLocation)
+                alertDialogBuilder.setCancelable(true)
 
-                val notiLocationTask = if (arguments == null) {
-                    null
-                } else {
-                    MapsFragmentArgs.fromBundle(requireArguments()).notiLocationTask
-                }
+                alertDialogBuilder.setPositiveButton(
+                        getString(android.R.string.ok)
+                ) { dialog, _ ->
+                    dialog.dismiss()
 
-                if (notiLocationTask != null) {
-                    if (notiLocationTask.hasLocation()) {
-                        notiLocationTask.location?.lat = latLng.latitude
-                        notiLocationTask.location?.lng = latLng.longitude
+
+                    val viewModel = ViewModelProvider(this).get(NotiLocationsViewModel::class.java)
+
+                    val tempMarker = latLng
+                    googleMap.addMarker(MarkerOptions().position(tempMarker).title("Luke's House"))
+                    googleMap.moveCamera(CameraUpdateFactory.newLatLng(tempMarker))
+
+                    val notiLocationTask = if (arguments == null) {
+                        null
                     } else {
-                        notiLocationTask.location =
-                            NotiLocation(null, "", latLng.latitude, latLng.longitude)
+                        MapsFragmentArgs.fromBundle(requireArguments()).notiLocationTask
                     }
 
-                    if (notiLocationTask.hasTask()) {
-                        viewModel.syncNotiLocationTask(notiLocationTask)
-                        currentView.findNavController()
-                            .navigate(R.id.action_mapsFragment_to_swipeView)
-                    } else {
+                    if (notiLocationTask != null) {
+                        if (notiLocationTask.hasLocation()) {
+                            notiLocationTask.location?.lat = latLng.latitude
+                            notiLocationTask.location?.lng = latLng.longitude
+                        } else {
+                            notiLocationTask.location =
+                                    NotiLocation(null, "", latLng.latitude, latLng.longitude)
+                        }
 
-                        val action =
-                            SwipeViewFragmentDirections.actionSwipeViewToCreateTaskFragment(
-                                notiLocationTask
-                            )
+                        if (notiLocationTask.hasTask()) {
+                            viewModel.syncNotiLocationTask(notiLocationTask)
+                            currentView.findNavController()
+                                    .navigate(R.id.action_mapsFragment_to_swipeView)
+                        } else {
+
+                            val action =
+                                    SwipeViewFragmentDirections.actionSwipeViewToCreateTaskFragment(
+                                            notiLocationTask
+                                    )
+                            currentView.findNavController().navigate(action)
+                        }
+
+                    } else {
+                        val newLocation = NotiLocation(null, null, latLng.latitude, latLng.longitude)
+                        val newNotiLocationTask = NotiLocationTask(location = newLocation)
+                        val action = SwipeViewFragmentDirections.actionSwipeViewToCreateTaskFragment(
+                                newNotiLocationTask
+                        )
                         currentView.findNavController().navigate(action)
                     }
 
-                } else {
-                    val newLocation = NotiLocation(null, null, latLng.latitude, latLng.longitude)
-                    val newNotiLocationTask = NotiLocationTask(location = newLocation)
-                    val action = SwipeViewFragmentDirections.actionSwipeViewToCreateTaskFragment(
-                        newNotiLocationTask
-                    )
-                    currentView.findNavController().navigate(action)
+
                 }
+                alertDialogBuilder.setNegativeButton(
+                        getString(android.R.string.cancel)
+                ) { dialog, _ ->
+                    println("===============Canceled")
+                    dialog.cancel()
+                }
+
+                val alertDialog: AlertDialog = alertDialogBuilder.create()
+                alertDialog.show()
+
+
+
+
+
             }
         }
 
-//        enableMyLocation()
 
 
         val tempLocation = LatLng(44.87335854645772, -91.9216525554657)

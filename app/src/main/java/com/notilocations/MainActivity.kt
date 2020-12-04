@@ -1,6 +1,7 @@
 package com.notilocations
 
 import android.Manifest
+import android.app.Activity
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
@@ -25,8 +26,12 @@ import com.google.android.gms.location.GeofencingClient
 import com.google.android.gms.location.GeofencingRequest
 import com.google.android.gms.location.LocationServices
 import com.notilocations.database.FullLocationTask
+import com.notilocations.database.Location
+import com.notilocations.database.LocationTask
+import com.notilocations.database.Task
 import com.notilocations.databinding.ActivityMainBinding
 import java.util.concurrent.Executors
+import java.util.Date
 
 
 class MainActivity : AppCompatActivity() {
@@ -40,8 +45,6 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-
 
         geofencingClient = LocationServices.getGeofencingClient(this)
 
@@ -62,9 +65,9 @@ class MainActivity : AppCompatActivity() {
 
         //val viewModel = ViewModelProvider(this).get(NotiLocationsViewModel::class.java)
 
-        //viewModel.createLocation(Location(45, "Test location", 44.872978, -91.929399))
-        //viewModel.createTask(Task(45, "Test notification", "Test longer description. I don't know what I'm doing but it seems promising!"))
-        //viewModel.createLocationTask(LocationTask(45, 45, 45, 500.0F, 100, Date(), false))
+//        viewModel.createLocation(Location(45, "Test location", 44.872978, -91.929399))
+//        viewModel.createTask(Task(45, "Test notification", "Test longer description. I don't know what I'm doing but it seems promising!"))
+//        viewModel.createLocationTask(LocationTask(45, 45, 45, 500.0F, 100, Date(), false))
 
         val response =
             GoogleApiAvailability.getInstance().isGooglePlayServicesAvailable(this)
