@@ -1,5 +1,6 @@
 package com.notilocations
 
+import android.content.Intent
 import android.os.Bundle
 import android.text.TextUtils
 import android.util.Log
@@ -41,8 +42,16 @@ class CreateTaskFragment : Fragment() {
             }
         }
         binding.addLocation.setOnClickListener { v: View ->
+
+
+
             v.findNavController().navigate(R.id.action_createTaskFragment_to_mapsFragment)
         }
         return binding.root
+    }
+
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
     }
 }
