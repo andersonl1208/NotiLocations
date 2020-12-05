@@ -4,10 +4,11 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.EditText
 import androidx.appcompat.app.AlertDialog
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.LiveData
+import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.findNavController
 import com.google.android.gms.maps.CameraUpdateFactory
@@ -17,7 +18,6 @@ import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
 import com.notilocations.database.FullLocationTask
-import com.notilocations.database.LocationTask
 import com.notilocations.databinding.FragmentMapsBinding
 
 class MapsFragment : Fragment(), OnMapReadyCallback {
@@ -41,69 +41,37 @@ class MapsFragment : Fragment(), OnMapReadyCallback {
             if (latLng != null) {
                 println("NotiLocation: " + latLng.latitude + "\t" + latLng.longitude)
 
-
                 val alertDialogBuilder: AlertDialog.Builder = AlertDialog.Builder(requireContext())
+                val input = EditText(requireContext())
+                input.hint = "Location name"
+                alertDialogBuilder.setView(input)
                 alertDialogBuilder.setMessage(R.string.confirmLocation)
+
                 alertDialogBuilder.setCancelable(true)
 
                 alertDialogBuilder.setPositiveButton(
-                        getString(android.R.string.ok)
+                    getString(android.R.string.ok)
                 ) { dialog, _ ->
-                    dialog.dismiss()
 
-
-                    val viewModel = ViewModelProvider(this).get(NotiLocationsViewModel::class.java)
-
-                    val notiLocationTask = if (arguments == null) {
-                        null
-                    } else {
-                        MapsFragmentArgs.fromBundle(requireArguments()).notiLocationTask
-                    }
-
-                    if (notiLocationTask != null) {
-                        if (notiLocationTask.hasLocation()) {
-                            notiLocationTask.location?.lat = latLng.latitude
-                            notiLocationTask.location?.lng = latLng.longitude
-                        } else {
-                            notiLocationTask.location =
-                                    NotiLocation(null, "", latLng.latitude, latLng.longitude)
-                        }
-
-                        if (notiLocationTask.hasTask()) {
-                            viewModel.syncNotiLocationTask(notiLocationTask)
-                            currentView.findNavController()
-                                    .navigate(R.id.action_mapsFragment_to_swipeView)
-                        } else {
-
-                            val action =
-                                    SwipeViewFragmentDirections.actionSwipeViewToCreateTaskFragment(
-                                            notiLocationTask
-                                    )
-                            currentView.findNavController().navigate(action)
-                        }
-
-                    } else {
-                        val newLocation = NotiLocation(null, null, latLng.latitude, latLng.longitude)
-                        val newNotiLocationTask = NotiLocationTask(location = newLocation)
-                        val action = SwipeViewFragmentDirections.actionSwipeViewToCreateTaskFragment(
-                                newNotiLocationTask
+                    handleNewLocation(
+                        NotiLocation(
+                            null,
+                            input.text.toString(),
+                            latLng.latitude,
+                            latLng.longitude
                         )
-                        currentView.findNavController().navigate(action)
-                    }
-
-
+                    )
+                    dialog.dismiss()
                 }
+
                 alertDialogBuilder.setNegativeButton(
-                        getString(android.R.string.cancel)
+                    getString(android.R.string.cancel)
                 ) { dialog, _ ->
                     dialog.cancel()
                 }
 
                 val alertDialog: AlertDialog = alertDialogBuilder.create()
                 alertDialog.show()
-
-                reloadLocations()
-
             }
         }
 
@@ -130,13 +98,36 @@ class MapsFragment : Fragment(), OnMapReadyCallback {
 
     }
 
+    private fun handleNewLocation(notiLocation: NotiLocation?) {
+
+        val viewModel = ViewModelProvider(this).get(NotiLocationsViewModel::class.java)
+
+        val notiLocationTask =
+            MapsFragmentArgs.fromBundle(requireArguments()).notiLocationTask ?: NotiLocationTask()
+
+        notiLocationTask.location = notiLocation
+
+        if (notiLocationTask.hasTask()) {
+            viewModel.syncNotiLocationTask(notiLocationTask)
+            currentView.findNavController()
+                .navigate(R.id.action_mapsFragment_to_swipeView)
+        } else {
+
+            val action =
+                SwipeViewFragmentDirections.actionSwipeViewToCreateTaskFragment(
+                    notiLocationTask
+                )
+            currentView.findNavController().navigate(action)
+        }
+    }
+
     override fun onCreateView(
-            inflater: LayoutInflater,
-            container: ViewGroup?,
-            savedInstanceState: Bundle?
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
     ): View? {
         binding = DataBindingUtil.inflate(
-                inflater, R.layout.fragment_maps, container, false
+            inflater, R.layout.fragment_maps, container, false
         )
 
         return binding.root
@@ -147,7 +138,7 @@ class MapsFragment : Fragment(), OnMapReadyCallback {
         val mapFragment = childFragmentManager.findFragmentById(R.id.map) as SupportMapFragment?
         mapFragment?.getMapAsync(callback)
 
-        reloadLocations();
+        createLocationObserver()
 
     }
 
@@ -161,26 +152,25 @@ class MapsFragment : Fragment(), OnMapReadyCallback {
      *
      *
      */
-    fun reloadLocations() {
-        println("========= Reloading Map")
+    private fun createLocationObserver() {
+
         val viewModel = ViewModelProvider(this).get(NotiLocationsViewModel::class.java)
 
-        this.locations = viewModel.getActiveFullLocationTasksStatic();
+        viewModel.getActiveFullLocationTasks().observe(viewLifecycleOwner,
+            Observer<List<FullLocationTask>> { locationTasks ->
+                println("========= Reloading Map")
 
-//        val tempLocations = this.locations
+                map.clear()
 
-        this.locations.forEach { location ->
-
-            val tempLocation = LatLng(location.location.lat, location.location.lng)
-            this.map.addMarker(MarkerOptions()
-                    .position(tempLocation)
-                    .title(location.location.name)
-
-            ).setTag(location.locationTask.id)
-
-
-        }
-
+                locationTasks.forEach { locationTask ->
+                    val tempLocation = LatLng(locationTask.location.lat, locationTask.location.lng)
+                    this.map.addMarker(
+                        MarkerOptions()
+                            .position(tempLocation)
+                            .title(locationTask.location.name)
+                    ).tag = locationTask.locationTask.id
+                }
+            })
     }
 
 
