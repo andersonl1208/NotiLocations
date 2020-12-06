@@ -189,8 +189,9 @@ class MapsFragment : Fragment(), OnMapReadyCallback {
                             .center(locationCoords)
                             // Radius is in meters
                             .radius(distance)
-                            .strokeColor(Color.BLUE)
-//                            .fillColor(Color.BLUE)
+                            .strokeWidth(4F)
+                            .strokeColor(Color.argb((.5*255).toInt(), 0, 128, 255))
+                            .fillColor(Color.argb((.2*255).toInt(), 56, 255, 255))
                     )
 
                     this.map.addMarker(
