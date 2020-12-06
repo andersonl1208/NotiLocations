@@ -28,23 +28,22 @@ class MapsFragment : Fragment(), OnMapReadyCallback {
 
     private lateinit var binding: FragmentMapsBinding
 
-//    private lateinit var locations: LiveData<List<FullLocationTask>>
+    //    private lateinit var locations: LiveData<List<FullLocationTask>>
     private lateinit var locations: List<FullLocationTask>
 
     //private val args: NotiLocationTask? =
 
     private val callback = OnMapReadyCallback { googleMap ->
         map = googleMap
+        createLocationObserver()
 
         map.setOnMapLongClickListener { latLng: LatLng? ->
-            println("long click")
             if (latLng != null) {
-                println("NotiLocation: " + latLng.latitude + "\t" + latLng.longitude)
 
                 val alertDialogBuilder: AlertDialog.Builder = AlertDialog.Builder(requireContext())
                 val input = EditText(requireContext())
                 input.hint = "Location name"
-                alertDialogBuilder.setView(input)
+//                alertDialogBuilder.setView(input)
                 alertDialogBuilder.setMessage(R.string.confirmLocation)
 
                 alertDialogBuilder.setCancelable(true)
@@ -76,9 +75,6 @@ class MapsFragment : Fragment(), OnMapReadyCallback {
         }
 
 
-        val tempLocation = LatLng(44.87335854645772, -91.9216525554657)
-        googleMap.addMarker(MarkerOptions().position(tempLocation).title("Luke's House"))
-        googleMap.moveCamera(CameraUpdateFactory.newLatLng(tempLocation))
         // Set all the settings of the map to match the current state of the checkboxes
         with(map.uiSettings) {
             isZoomControlsEnabled = true
@@ -92,9 +88,10 @@ class MapsFragment : Fragment(), OnMapReadyCallback {
             isRotateGesturesEnabled = true
         }
 
-        // Example Marker
-//        val sydney = LatLng(-34.0, 151.0)
-//        googleMap.addMarker(MarkerOptions().position(sydney).title("Marker in Sydney"))
+
+        // Moving camera to location
+        map.moveCamera(CameraUpdateFactory.newLatLngZoom(locationToZoomTo(), 17F))
+
 
     }
 
@@ -136,20 +133,16 @@ class MapsFragment : Fragment(), OnMapReadyCallback {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         currentView = view
         val mapFragment = childFragmentManager.findFragmentById(R.id.map) as SupportMapFragment?
-        mapFragment?.getMapAsync(callback)
-
-        createLocationObserver()
+        mapFragment?.getMapAsync(callback);
 
     }
 
-    override fun onMapReady(googleMap: GoogleMap?) {
-
-
-    }
+    // This function does nothing and is never called
+    override fun onMapReady(googleMap: GoogleMap?) {}
 
 
     /**
-     *
+     * Reloads the locations on maps so it updates with the database
      *
      */
     private fun createLocationObserver() {
@@ -171,6 +164,25 @@ class MapsFragment : Fragment(), OnMapReadyCallback {
                     ).tag = locationTask.locationTask.id
                 }
             })
+    }
+
+    private fun locationToZoomTo(): LatLng {
+        var locationToZoom = LatLng(0.0, 0.0);
+
+        val viewModel = ViewModelProvider(this).get(NotiLocationsViewModel::class.java)
+
+        viewModel.getActiveFullLocationTasks().observe(viewLifecycleOwner,
+            Observer<List<FullLocationTask>> { locationTasks ->
+                println("========= Reloading Map")
+
+                // Right now it just gets the first element in the database
+                locationToZoom =
+                    LatLng(locationTasks.get(0).location.lat, locationTasks.get(0).location.lng);
+
+            })
+
+
+        return locationToZoom
     }
 
 
