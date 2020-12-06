@@ -1,5 +1,6 @@
 package com.notilocations
 
+import android.graphics.Color
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -15,10 +16,12 @@ import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
+import com.google.android.gms.maps.model.CircleOptions
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
 import com.notilocations.database.FullLocationTask
 import com.notilocations.databinding.FragmentMapsBinding
+
 
 class MapsFragment : Fragment(), OnMapReadyCallback {
 
@@ -43,7 +46,7 @@ class MapsFragment : Fragment(), OnMapReadyCallback {
                 val alertDialogBuilder: AlertDialog.Builder = AlertDialog.Builder(requireContext())
                 val input = EditText(requireContext())
                 input.hint = "Location name"
-//                alertDialogBuilder.setView(input)
+                alertDialogBuilder.setView(input)
                 alertDialogBuilder.setMessage(R.string.confirmLocation)
 
                 alertDialogBuilder.setCancelable(true)
@@ -90,7 +93,7 @@ class MapsFragment : Fragment(), OnMapReadyCallback {
 
 
         // Moving camera to location
-        map.moveCamera(CameraUpdateFactory.newLatLngZoom(locationToZoomTo(), 17F))
+        map.moveCamera(CameraUpdateFactory.newLatLngZoom(locationToZoomTo(), 12F))
 
 
     }
@@ -99,8 +102,15 @@ class MapsFragment : Fragment(), OnMapReadyCallback {
 
         val viewModel = ViewModelProvider(this).get(NotiLocationsViewModel::class.java)
 
-        val notiLocationTask =
-            MapsFragmentArgs.fromBundle(requireArguments()).notiLocationTask ?: NotiLocationTask()
+        var notiLocationTask: NotiLocationTask;
+
+        try {
+
+            notiLocationTask = MapsFragmentArgs.fromBundle(requireArguments()).notiLocationTask
+                ?: NotiLocationTask()
+        } catch (e: Exception) {
+            notiLocationTask = NotiLocationTask()
+        }
 
         notiLocationTask.location = notiLocation
 
@@ -156,12 +166,39 @@ class MapsFragment : Fragment(), OnMapReadyCallback {
                 map.clear()
 
                 locationTasks.forEach { locationTask ->
-                    val tempLocation = LatLng(locationTask.location.lat, locationTask.location.lng)
+
+                    var name = locationTask.location.name;
+                    if (name.equals(""))
+                        name = locationTask.task.title
+
+
+                    // Distance is in meters
+                    var distance: Double = 0.0
+
+                    if (locationTask.locationTask.distance != null) {
+                        println("here: " + locationTask.locationTask.distance)
+                        distance = locationTask.locationTask.distance * 1609.34
+                    }
+
+                    var locationCoords =
+                        LatLng(locationTask.location.lat, locationTask.location.lng)
+
+
+                    this.map.addCircle(
+                        CircleOptions()
+                            .center(locationCoords)
+                            // Radius is in meters
+                            .radius(distance)
+                            .strokeColor(Color.BLUE)
+//                            .fillColor(Color.BLUE)
+                    )
+
                     this.map.addMarker(
                         MarkerOptions()
-                            .position(tempLocation)
-                            .title(locationTask.location.name)
+                            .position(locationCoords)
+                            .title(name)
                     ).tag = locationTask.locationTask.id
+
                 }
             })
     }
