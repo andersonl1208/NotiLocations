@@ -165,47 +165,51 @@ class MapsFragment : Fragment(), OnMapReadyCallback {
 
                 map.clear()
 
-                locationTasks.forEach { locationTask ->
+                if (locationTasks.isNotEmpty()) {
 
-                    var name = locationTask.location.name;
-                    if (name.equals(""))
-                        name = locationTask.task.title
+                    locationTasks.forEach { locationTask ->
+
+                        var name = locationTask.location.name;
+                        if (name.equals(""))
+                            name = locationTask.task.title
 
 
-                    // Distance is in meters
-                    var distance: Double = 0.0
+                        // Distance is in meters
+                        var distance: Double = 0.0
 
-                    if (locationTask.locationTask.distance != null) {
-                        println("here: " + locationTask.locationTask.distance)
-                        distance = locationTask.locationTask.distance * 1609.34
+                        if (locationTask.locationTask.distance != null) {
+                            println("here: " + locationTask.locationTask.distance)
+                            distance = locationTask.locationTask.distance * 1609.34
+                        }
+
+                        var locationCoords =
+                            LatLng(locationTask.location.lat, locationTask.location.lng)
+
+
+                        this.map.addCircle(
+                            CircleOptions()
+                                .center(locationCoords)
+                                // Radius is in meters
+                                .radius(distance)
+                                .strokeWidth(4F)
+                                .strokeColor(Color.argb((.5 * 255).toInt(), 0, 128, 255))
+                                .fillColor(Color.argb((.2 * 255).toInt(), 56, 255, 255))
+                        )
+
+                        this.map.addMarker(
+                            MarkerOptions()
+                                .position(locationCoords)
+                                .title(name)
+                        ).tag = locationTask.locationTask.id
+
                     }
-
-                    var locationCoords =
-                        LatLng(locationTask.location.lat, locationTask.location.lng)
-
-
-                    this.map.addCircle(
-                        CircleOptions()
-                            .center(locationCoords)
-                            // Radius is in meters
-                            .radius(distance)
-                            .strokeWidth(4F)
-                            .strokeColor(Color.argb((.5*255).toInt(), 0, 128, 255))
-                            .fillColor(Color.argb((.2*255).toInt(), 56, 255, 255))
-                    )
-
-                    this.map.addMarker(
-                        MarkerOptions()
-                            .position(locationCoords)
-                            .title(name)
-                    ).tag = locationTask.locationTask.id
-
                 }
             })
     }
 
     private fun locationToZoomTo(): LatLng {
-        var locationToZoom = LatLng(0.0, 0.0);
+        var locationToZoom = LatLng(40.7, -73.99);
+
 
         val viewModel = ViewModelProvider(this).get(NotiLocationsViewModel::class.java)
 
@@ -214,8 +218,13 @@ class MapsFragment : Fragment(), OnMapReadyCallback {
                 println("========= Reloading Map")
 
                 // Right now it just gets the first element in the database
-                locationToZoom =
-                    LatLng(locationTasks.get(0).location.lat, locationTasks.get(0).location.lng);
+                if (locationTasks.isNotEmpty()) {
+                    locationToZoom =
+                        LatLng(
+                            locationTasks.get(0).location.lat,
+                            locationTasks.get(0).location.lng
+                        );
+                }
 
             })
 
