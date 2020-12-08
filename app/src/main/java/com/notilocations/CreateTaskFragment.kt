@@ -149,6 +149,7 @@ class CreateTaskFragment : Fragment() {
             val viewModel: NotiLocationsViewModel by viewModels()
             binding.titleInput.onEditorAction(EditorInfo.IME_ACTION_DONE)
             binding.descriptionInput.onEditorAction(EditorInfo.IME_ACTION_DONE)
+            binding.distanceInput.onEditorAction(EditorInfo.IME_ACTION_DONE)
 
             if (notiLocationTask != null) {
 
@@ -174,6 +175,7 @@ class CreateTaskFragment : Fragment() {
 
                 if (notiLocationTask.hasLocation() && !defaultToMap) {
                     viewModel.syncNotiLocationTask(notiLocationTask)
+                    HandleGeofences.getInstance(requireActivity().application).create()
                     v.findNavController().navigate(R.id.action_createTaskFragment_to_swipeView)
                 } else {
 
@@ -204,6 +206,7 @@ class CreateTaskFragment : Fragment() {
                 val action = CreateTaskFragmentDirections.actionCreateTaskFragmentToMapsFragment(
                     newNotiLocationTask
                 )
+
                 v.findNavController().navigate(action)
             }
         }
