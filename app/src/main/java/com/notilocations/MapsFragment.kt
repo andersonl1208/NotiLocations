@@ -65,7 +65,6 @@ class MapsFragment : Fragment(), OnMapReadyCallback {
                     )
                     dialog.dismiss()
                 }
-
                 alertDialogBuilder.setNegativeButton(
                     getString(android.R.string.cancel)
                 ) { dialog, _ ->
