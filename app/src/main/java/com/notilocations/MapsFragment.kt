@@ -1,21 +1,27 @@
 package com.notilocations
 
+import android.graphics.Color
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.EditText
 import androidx.appcompat.app.AlertDialog
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.findNavController
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
+import com.google.android.gms.maps.model.CircleOptions
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
+import com.notilocations.database.FullLocationTask
 import com.notilocations.databinding.FragmentMapsBinding
+
 
 class MapsFragment : Fragment(), OnMapReadyCallback {
 
@@ -25,95 +31,53 @@ class MapsFragment : Fragment(), OnMapReadyCallback {
 
     private lateinit var binding: FragmentMapsBinding
 
+    //    private lateinit var locations: LiveData<List<FullLocationTask>>
+    private lateinit var locations: List<FullLocationTask>
+
     //private val args: NotiLocationTask? =
 
     private val callback = OnMapReadyCallback { googleMap ->
         map = googleMap
+        createLocationObserver()
 
         map.setOnMapLongClickListener { latLng: LatLng? ->
-            println("long click")
             if (latLng != null) {
-                println("NotiLocation: " + latLng.latitude + "\t" + latLng.longitude)
-
 
                 val alertDialogBuilder: AlertDialog.Builder = AlertDialog.Builder(requireContext())
+                val input = EditText(requireContext())
+                input.hint = "Location name"
+                alertDialogBuilder.setView(input)
                 alertDialogBuilder.setMessage(R.string.confirmLocation)
+
                 alertDialogBuilder.setCancelable(true)
 
                 alertDialogBuilder.setPositiveButton(
-                        getString(android.R.string.ok)
+                    getString(android.R.string.ok)
                 ) { dialog, _ ->
-                    dialog.dismiss()
+                    handleNewLocation(
+                        NotiLocation(
+                            null,
+                            input.text.toString(),
+                            latLng.latitude,
+                            latLng.longitude
 
-
-                    val viewModel = ViewModelProvider(this).get(NotiLocationsViewModel::class.java)
-
-                    val tempMarker = latLng
-                    googleMap.addMarker(MarkerOptions().position(tempMarker).title("Luke's House"))
-                    googleMap.moveCamera(CameraUpdateFactory.newLatLng(tempMarker))
-
-                    val notiLocationTask = if (arguments == null) {
-                        null
-                    } else {
-                        MapsFragmentArgs.fromBundle(requireArguments()).notiLocationTask
-                    }
-
-                    if (notiLocationTask != null) {
-                        if (notiLocationTask.hasLocation()) {
-                            notiLocationTask.location?.lat = latLng.latitude
-                            notiLocationTask.location?.lng = latLng.longitude
-                        } else {
-                            notiLocationTask.location =
-                                    NotiLocation(null, "", latLng.latitude, latLng.longitude)
-                        }
-
-                        if (notiLocationTask.hasTask()) {
-                            viewModel.syncNotiLocationTask(notiLocationTask)
-                            HandleGeofences.getInstance(requireActivity().application).create()
-                            currentView.findNavController()
-                                .navigate(R.id.action_mapsFragment_to_swipeView)
-                        } else {
-
-                            val action =
-                                    SwipeViewFragmentDirections.actionSwipeViewToCreateTaskFragment(
-                                            notiLocationTask
-                                    )
-                            currentView.findNavController().navigate(action)
-                        }
-
-                    } else {
-                        val newLocation = NotiLocation(null, null, latLng.latitude, latLng.longitude)
-                        val newNotiLocationTask = NotiLocationTask(location = newLocation)
-                        val action = SwipeViewFragmentDirections.actionSwipeViewToCreateTaskFragment(
-                                newNotiLocationTask
                         )
-                        currentView.findNavController().navigate(action)
-                    }
-
-
+                    )
+                    dialog.dismiss()
                 }
+
                 alertDialogBuilder.setNegativeButton(
-                        getString(android.R.string.cancel)
+                    getString(android.R.string.cancel)
                 ) { dialog, _ ->
-                    println("===============Canceled")
                     dialog.cancel()
                 }
 
                 val alertDialog: AlertDialog = alertDialogBuilder.create()
                 alertDialog.show()
-
-
-
-
-
             }
         }
 
 
-
-        val tempLocation = LatLng(44.87335854645772, -91.9216525554657)
-        googleMap.addMarker(MarkerOptions().position(tempLocation).title("Luke's House"))
-        googleMap.moveCamera(CameraUpdateFactory.newLatLng(tempLocation))
         // Set all the settings of the map to match the current state of the checkboxes
         with(map.uiSettings) {
             isZoomControlsEnabled = true
@@ -127,10 +91,41 @@ class MapsFragment : Fragment(), OnMapReadyCallback {
             isRotateGesturesEnabled = true
         }
 
-        // Example Marker
-//        val sydney = LatLng(-34.0, 151.0)
-//        googleMap.addMarker(MarkerOptions().position(sydney).title("Marker in Sydney"))
 
+        // Moving camera to location
+        map.moveCamera(CameraUpdateFactory.newLatLngZoom(locationToZoomTo(), 12F))
+
+
+    }
+
+    private fun handleNewLocation(notiLocation: NotiLocation?) {
+
+        val viewModel = ViewModelProvider(this).get(NotiLocationsViewModel::class.java)
+
+        var notiLocationTask: NotiLocationTask;
+
+        try {
+
+            notiLocationTask = MapsFragmentArgs.fromBundle(requireArguments()).notiLocationTask
+                ?: NotiLocationTask()
+        } catch (e: Exception) {
+            notiLocationTask = NotiLocationTask()
+        }
+
+        notiLocationTask.location = notiLocation
+
+        if (notiLocationTask.hasTask()) {
+            viewModel.syncNotiLocationTask(notiLocationTask)
+            currentView.findNavController()
+                .navigate(R.id.action_mapsFragment_to_swipeView)
+        } else {
+
+            val action =
+                SwipeViewFragmentDirections.actionSwipeViewToCreateTaskFragment(
+                    notiLocationTask
+                )
+            currentView.findNavController().navigate(action)
+        }
     }
 
     override fun onCreateView(
@@ -146,19 +141,96 @@ class MapsFragment : Fragment(), OnMapReadyCallback {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
         currentView = view
         val mapFragment = childFragmentManager.findFragmentById(R.id.map) as SupportMapFragment?
-        mapFragment?.getMapAsync(callback)
+        mapFragment?.getMapAsync(callback);
 
     }
 
-    override fun onMapReady(googleMap: GoogleMap?) {
+    // This function does nothing and is never called
+    override fun onMapReady(googleMap: GoogleMap?) {}
 
 
+    /**
+     * Reloads the locations on maps so it updates with the database
+     *
+     */
+    private fun createLocationObserver() {
 
+        val viewModel = ViewModelProvider(this).get(NotiLocationsViewModel::class.java)
+
+        viewModel.getActiveFullLocationTasks().observe(viewLifecycleOwner,
+            Observer<List<FullLocationTask>> { locationTasks ->
+                println("========= Reloading Map")
+
+                map.clear()
+
+                if (locationTasks.isNotEmpty()) {
+
+                    locationTasks.forEach { locationTask ->
+
+                        var name = locationTask.location.name;
+                        if (name.equals(""))
+                            name = locationTask.task.title
+
+
+                        // Distance is in meters
+                        var distance: Double = 0.0
+
+                        if (locationTask.locationTask.distance != null) {
+                            println("here: " + locationTask.locationTask.distance)
+                            distance = locationTask.locationTask.distance * 1609.34
+                        }
+
+                        var locationCoords =
+                            LatLng(locationTask.location.lat, locationTask.location.lng)
+
+
+                        this.map.addCircle(
+                            CircleOptions()
+                                .center(locationCoords)
+                                // Radius is in meters
+                                .radius(distance)
+                                .strokeWidth(4F)
+                                .strokeColor(Color.argb((.5 * 255).toInt(), 0, 128, 255))
+                                .fillColor(Color.argb((.2 * 255).toInt(), 56, 255, 255))
+                        )
+
+                        this.map.addMarker(
+                            MarkerOptions()
+                                .position(locationCoords)
+                                .title(name)
+                        ).tag = locationTask.locationTask.id
+
+                    }
+                }
+            })
     }
 
+    private fun locationToZoomTo(): LatLng {
+        var locationToZoom = LatLng(40.7, -73.99);
+
+
+        val viewModel = ViewModelProvider(this).get(NotiLocationsViewModel::class.java)
+
+        viewModel.getActiveFullLocationTasks().observe(viewLifecycleOwner,
+            Observer<List<FullLocationTask>> { locationTasks ->
+                println("========= Reloading Map")
+
+                // Right now it just gets the first element in the database
+                if (locationTasks.isNotEmpty()) {
+                    locationToZoom =
+                        LatLng(
+                            locationTasks.get(0).location.lat,
+                            locationTasks.get(0).location.lng
+                        );
+                }
+
+            })
+
+
+        return locationToZoom
+    }
 
 
 //    /** Override the onRequestPermissionResult to use EasyPermissions */
