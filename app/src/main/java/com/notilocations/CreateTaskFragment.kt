@@ -6,6 +6,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
+import android.widget.SeekBar
+import android.widget.SeekBar.OnSeekBarChangeListener
 import android.widget.Toast
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
@@ -13,6 +15,7 @@ import androidx.fragment.app.viewModels
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.navArgs
 import com.notilocations.databinding.FragmentCreateTaskBinding
+
 
 class CreateTaskFragment : Fragment() {
     private val args: CreateTaskFragmentArgs by navArgs()
@@ -31,65 +34,18 @@ class CreateTaskFragment : Fragment() {
             false
         )
 
-        val notiLocationTask =
-            CreateTaskFragmentArgs.fromBundle(requireArguments()).notiLocationTask
-
-        binding.maxSpeedInput.isEnabled = false
-
-        if (notiLocationTask != null) {
-            if (notiLocationTask.hasLocation()) {
-                binding.addLocation.text = getString(R.string.updateLocation)
-            }
-
-            if (notiLocationTask.hasTask()) {
-                binding.titleInput.setText(notiLocationTask.task?.title)
-                binding.descriptionInput.setText(notiLocationTask.task?.description)
-                binding.titleInput.hint = notiLocationTask.task?.title
-                binding.descriptionInput.hint = notiLocationTask.task?.description
-
-                if (notiLocationTask.maxSpeed != null) {
-                    binding.maxSpeedEnabledInput.isChecked = true
-                    binding.maxSpeedInput.isEnabled = true
-                    binding.maxSpeedInput.progress = notiLocationTask.maxSpeed ?: 0
-                }
-
-                if (notiLocationTask.distance != null) {
-                    binding.distanceInput.setText(notiLocationTask.distance?.toString())
-                    binding.distanceInput.hint = notiLocationTask.distance?.toString()
-                }
-
-                binding.triggerOnExitInput.isChecked = notiLocationTask.triggerOnExit
-            }
-
-            if (notiLocationTask.hasLocationTaskId()) {
-                binding.deleteButton.setOnClickListener { v: View ->
-                    //delete the task
-                    val viewModel: NotiLocationsViewModel by viewModels()
-                    if (notiLocationTask.getDatabaseLocationTask() != null) {
-                        viewModel.deleteLocationTask(notiLocationTask.getDatabaseLocationTask()!!)
-                    }
-
-                    binding.titleInput.onEditorAction(EditorInfo.IME_ACTION_DONE)
-                    binding.descriptionInput.onEditorAction(EditorInfo.IME_ACTION_DONE)
-
-                    v.findNavController().navigate(R.id.action_createTaskFragment_to_swipeView)
-                }
-            } else {
-                binding.deleteButton.visibility = View.INVISIBLE
-            }
-        } else {
-            binding.deleteButton.visibility = View.INVISIBLE
-        }
-
-        createOnClickListeners(notiLocationTask)
+        initializeViewsAndClickListeners(CreateTaskFragmentArgs.fromBundle(requireArguments()).notiLocationTask)
 
         return binding.root
     }
 
+    private fun initializeViewsAndClickListeners(notiLocationTask: NotiLocationTask?) {
+
+        createOnClickListeners(notiLocationTask)
+        initializeViews(notiLocationTask)
+    }
+
     private fun createOnClickListeners(notiLocationTask: NotiLocationTask?) {
-        binding.maxSpeedEnabledInput.setOnClickListener {
-            binding.maxSpeedInput.isEnabled = binding.maxSpeedEnabledInput.isChecked
-        }
 
         binding.addLocation.setOnClickListener { v: View ->
             navigateListener(v, notiLocationTask, true)
@@ -98,6 +54,88 @@ class CreateTaskFragment : Fragment() {
         binding.submitTask.setOnClickListener { v: View ->
             navigateListener(v, notiLocationTask, false)
         }
+    }
+
+    private fun initializeViews(notiLocationTask: NotiLocationTask?) {
+        binding.titleInput.setText(notiLocationTask?.task?.title)
+        binding.descriptionInput.setText(notiLocationTask?.task?.description)
+        binding.titleInput.hint = notiLocationTask?.task?.title
+        binding.descriptionInput.hint = notiLocationTask?.task?.description
+
+        binding.triggerOnExitInput.isChecked = notiLocationTask?.triggerOnExit ?: false
+
+        if (notiLocationTask?.hasLocation() == true) {
+            binding.addLocation.text = getString(R.string.updateLocation)
+        }
+
+        initializeDeleteButton(notiLocationTask)
+        initializeMaxSpeed(notiLocationTask?.maxSpeed)
+        initializeDistance(notiLocationTask?.distance)
+    }
+
+
+    private fun initializeDeleteButton(notiLocationTask: NotiLocationTask?) {
+        if (notiLocationTask?.hasLocationTaskId() == true) {
+            binding.deleteButton.setOnClickListener { v: View ->
+                //delete the task
+                val viewModel: NotiLocationsViewModel by viewModels()
+                if (notiLocationTask.getDatabaseLocationTask() != null) {
+                    viewModel.deleteLocationTask(notiLocationTask.getDatabaseLocationTask()!!)
+                }
+
+                binding.titleInput.onEditorAction(EditorInfo.IME_ACTION_DONE)
+                binding.descriptionInput.onEditorAction(EditorInfo.IME_ACTION_DONE)
+
+                v.findNavController().navigate(R.id.action_createTaskFragment_to_swipeView)
+            }
+        } else {
+            binding.deleteButton.visibility = View.INVISIBLE
+        }
+    }
+
+    private fun initializeMaxSpeed(maxSpeed: Int?) {
+
+        binding.maxSpeedInput.max =
+            resources.getInteger(R.integer.speed_max) - resources.getInteger(
+                R.integer.speed_min
+            )
+
+        if (maxSpeed != null) {
+            binding.maxSpeedEnabledInput.isChecked = true
+            binding.maxSpeedInput.isEnabled = true
+            binding.maxSpeedInput.progress = maxSpeed - resources.getInteger(R.integer.speed_min)
+        } else {
+            binding.maxSpeedEnabledInput.isChecked = false
+            binding.maxSpeedInput.isEnabled = false
+            binding.maxSpeedInput.progress = 0
+        }
+
+        binding.maxSpeedValue.text = getMaxSpeedValue().toString()
+
+        binding.maxSpeedEnabledInput.setOnClickListener {
+            binding.maxSpeedInput.isEnabled = binding.maxSpeedEnabledInput.isChecked
+        }
+
+        binding.maxSpeedInput.setOnSeekBarChangeListener(object : OnSeekBarChangeListener {
+            override fun onStopTrackingTouch(seekBar: SeekBar) {}
+
+            override fun onStartTrackingTouch(seekBar: SeekBar) {}
+
+            override fun onProgressChanged(seekBar: SeekBar, progress: Int, fromUser: Boolean) {
+                binding.maxSpeedValue.text = getMaxSpeedValue().toString()
+            }
+        })
+    }
+
+    private fun initializeDistance(distance: Float?) {
+        if (distance != null) {
+            binding.distanceInput.setText(distance.toString())
+            binding.distanceInput.hint = distance.toString()
+        }
+    }
+
+    private fun getMaxSpeedValue(): Int {
+        return binding.maxSpeedInput.progress + resources.getInteger(R.integer.speed_min)
     }
 
     private fun navigateListener(
@@ -111,6 +149,7 @@ class CreateTaskFragment : Fragment() {
             val viewModel: NotiLocationsViewModel by viewModels()
             binding.titleInput.onEditorAction(EditorInfo.IME_ACTION_DONE)
             binding.descriptionInput.onEditorAction(EditorInfo.IME_ACTION_DONE)
+            binding.distanceInput.onEditorAction(EditorInfo.IME_ACTION_DONE)
 
             if (notiLocationTask != null) {
 
@@ -127,7 +166,7 @@ class CreateTaskFragment : Fragment() {
 
 
                 notiLocationTask.maxSpeed = if (binding.maxSpeedEnabledInput.isChecked) {
-                    binding.maxSpeedInput.progress
+                    getMaxSpeedValue()
                 } else {
                     null
                 }
@@ -136,6 +175,7 @@ class CreateTaskFragment : Fragment() {
 
                 if (notiLocationTask.hasLocation() && !defaultToMap) {
                     viewModel.syncNotiLocationTask(notiLocationTask)
+                    HandleGeofences.getInstance(requireActivity().application).create()
                     v.findNavController().navigate(R.id.action_createTaskFragment_to_swipeView)
                 } else {
 
@@ -154,7 +194,7 @@ class CreateTaskFragment : Fragment() {
                 )
                 val newNotiLocationTask = NotiLocationTask(
                     maxSpeed = if (binding.maxSpeedEnabledInput.isChecked) {
-                        binding.maxSpeedInput.progress
+                        getMaxSpeedValue()
                     } else {
                         null
                     },
@@ -166,6 +206,7 @@ class CreateTaskFragment : Fragment() {
                 val action = CreateTaskFragmentDirections.actionCreateTaskFragmentToMapsFragment(
                     newNotiLocationTask
                 )
+
                 v.findNavController().navigate(action)
             }
         }

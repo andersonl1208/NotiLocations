@@ -54,13 +54,13 @@ class MapsFragment : Fragment(), OnMapReadyCallback {
                 alertDialogBuilder.setPositiveButton(
                     getString(android.R.string.ok)
                 ) { dialog, _ ->
-
                     handleNewLocation(
                         NotiLocation(
                             null,
                             input.text.toString(),
                             latLng.latitude,
                             latLng.longitude
+
                         )
                     )
                     dialog.dismiss()

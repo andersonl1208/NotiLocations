@@ -15,7 +15,9 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/padding"
             android:layout_marginTop="@dimen/padding"
+            android:labelFor="@id/title_input"
             android:text="@string/titleTextView"
+            android:textColor="@color/secondary_text_material_light"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.045"
             app:layout_constraintStart_toStartOf="parent"
@@ -42,7 +44,9 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/padding"
             android:layout_marginTop="16dp"
+            android:labelFor="@id/description_input"
             android:text="@string/descriptionTextView"
+            android:textColor="@color/secondary_text_material_light"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.047"
             app:layout_constraintStart_toStartOf="parent"
@@ -69,6 +73,7 @@
             android:layout_marginEnd="@dimen/padding"
             android:layout_marginBottom="@dimen/padding"
             android:backgroundTint="@color/weldonBlue"
+            android:contentDescription="@string/submitContentDescription"
             android:src="@drawable/ic_baseline_check_24"
             android:text="@string/submitTask"
             app:layout_constraintBottom_toBottomOf="parent"
@@ -83,6 +88,7 @@
             android:layout_marginStart="16dp"
             android:layout_marginBottom="16dp"
             android:backgroundTint="@color/weldonBlue"
+            android:contentDescription="@string/deleteContentDescription"
             android:src="@drawable/ic_baseline_delete_forever_24"
             android:text="@string/deleteButton"
             app:layout_constraintBottom_toBottomOf="parent"
@@ -103,7 +109,9 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/padding"
+            android:labelFor="@id/distanceInput"
             android:text="@string/triggerDistanceText"
+            android:textColor="@color/secondary_text_material_light"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="@+id/taskDescription"
@@ -120,7 +128,8 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/distanceTextView" />
+            app:layout_constraintTop_toBottomOf="@+id/distanceTextView"
+            android:importantForAutofill="no" />
 
         <androidx.appcompat.widget.SwitchCompat
             android:id="@+id/maxSpeedEnabledInput"
@@ -137,14 +146,14 @@
 
         <SeekBar
             android:id="@+id/maxSpeedInput"
-            android:layout_width="match_parent"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/padding"
             android:layout_marginTop="@dimen/padding"
-            android:layout_marginEnd="@dimen/padding"
             android:max="@integer/speed_max"
+            android:paddingTop="2dip"
             android:visibility="visible"
-            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/maxSpeedValue"
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/maxSpeedEnabledInput" />
@@ -159,6 +168,16 @@
             android:textColor="@color/secondary_text_material_light"
             app:layout_constraintStart_toStartOf="@+id/maxSpeedEnabledInput"
             app:layout_constraintTop_toBottomOf="@+id/maxSpeedInput" />
+
+        <TextView
+            android:id="@+id/maxSpeedValue"
+            android:layout_width="30dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/padding"
+            android:layout_marginEnd="@dimen/padding"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/maxSpeedEnabledInput"
+            tools:text="100" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>
