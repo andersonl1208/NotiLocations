@@ -13,12 +13,10 @@ import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.findNavController
-import androidx.navigation.fragment.navArgs
 import com.notilocations.databinding.FragmentCreateTaskBinding
 
 
 class CreateTaskFragment : Fragment() {
-    private val args: CreateTaskFragmentArgs by navArgs()
     private lateinit var binding: FragmentCreateTaskBinding
 
     override fun onCreateView(
@@ -27,7 +25,7 @@ class CreateTaskFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
 
-        binding = DataBindingUtil.inflate<FragmentCreateTaskBinding>(
+        binding = DataBindingUtil.inflate(
             inflater,
             R.layout.fragment_create_task,
             container,
@@ -138,77 +136,73 @@ class CreateTaskFragment : Fragment() {
         return binding.maxSpeedInput.progress + resources.getInteger(R.integer.speed_min)
     }
 
+    private fun closeKeyboard() {
+        binding.titleInput.onEditorAction(EditorInfo.IME_ACTION_DONE)
+        binding.descriptionInput.onEditorAction(EditorInfo.IME_ACTION_DONE)
+        binding.distanceInput.onEditorAction(EditorInfo.IME_ACTION_DONE)
+    }
+
+    private fun validateInputs(): Boolean {
+        if (TextUtils.isEmpty(binding.titleInput.text.toString())) {
+            Toast.makeText(context, "Please enter a title for your task", Toast.LENGTH_SHORT).show()
+            return false
+        }
+
+        return true
+    }
+
+    private fun fillNotiLocationTaskFromInputs(notiLocationTask: NotiLocationTask): NotiLocationTask {
+
+        if (!notiLocationTask.hasTask()) {
+            notiLocationTask.task = NotiTask()
+        }
+
+        notiLocationTask.task?.title = binding.titleInput.text.toString()
+        notiLocationTask.task?.description = binding.descriptionInput.text.toString()
+
+        notiLocationTask.maxSpeed = if (binding.maxSpeedEnabledInput.isChecked) {
+            getMaxSpeedValue()
+        } else {
+            null
+        }
+
+        notiLocationTask.distance = binding.distanceInput.text.toString().toFloatOrNull()
+        notiLocationTask.triggerOnExit = binding.triggerOnExitInput.isChecked
+
+        return notiLocationTask
+    }
+
+    private fun handleNavigationOnSubmit(
+        v: View,
+        notiLocationTask: NotiLocationTask,
+        defaultToMap: Boolean
+    ) {
+        val viewModel: NotiLocationsViewModel by viewModels()
+
+        if (notiLocationTask.hasLocation() && !defaultToMap) {
+            viewModel.syncNotiLocationTask(notiLocationTask)
+            HandleGeofences.getInstance(requireActivity().application).create()
+            v.findNavController().navigate(R.id.action_createTaskFragment_to_swipeView)
+        } else {
+
+            val action =
+                CreateTaskFragmentDirections.actionCreateTaskFragmentToMapsFragment(
+                    notiLocationTask
+                )
+            v.findNavController().navigate(action)
+        }
+    }
+
     private fun navigateListener(
         v: View,
         notiLocationTask: NotiLocationTask?,
         defaultToMap: Boolean
     ) {
-        if (TextUtils.isEmpty(binding.titleInput.text.toString())) {
-            Toast.makeText(context, "Please enter a title for your task", Toast.LENGTH_SHORT).show()
-        } else {
-            val viewModel: NotiLocationsViewModel by viewModels()
-            binding.titleInput.onEditorAction(EditorInfo.IME_ACTION_DONE)
-            binding.descriptionInput.onEditorAction(EditorInfo.IME_ACTION_DONE)
-            binding.distanceInput.onEditorAction(EditorInfo.IME_ACTION_DONE)
-
-            if (notiLocationTask != null) {
-
-                if (notiLocationTask.hasTask()) {
-                    notiLocationTask.task?.title = binding.titleInput.text.toString()
-                    notiLocationTask.task?.description = binding.descriptionInput.text.toString()
-                } else {
-                    notiLocationTask.task = NotiTask(
-                        null,
-                        binding.titleInput.text.toString(),
-                        binding.descriptionInput.text.toString()
-                    )
-                }
-
-
-                notiLocationTask.maxSpeed = if (binding.maxSpeedEnabledInput.isChecked) {
-                    getMaxSpeedValue()
-                } else {
-                    null
-                }
-                notiLocationTask.distance = binding.distanceInput.text.toString().toFloatOrNull()
-                notiLocationTask.triggerOnExit = binding.triggerOnExitInput.isChecked
-
-                if (notiLocationTask.hasLocation() && !defaultToMap) {
-                    viewModel.syncNotiLocationTask(notiLocationTask)
-                    HandleGeofences.getInstance(requireActivity().application).create()
-                    v.findNavController().navigate(R.id.action_createTaskFragment_to_swipeView)
-                } else {
-
-                    val action =
-                        CreateTaskFragmentDirections.actionCreateTaskFragmentToMapsFragment(
-                            notiLocationTask
-                        )
-                    v.findNavController().navigate(action)
-                }
-            } else {
-                val newTask = NotiTask(
-                    null,
-                    binding.titleInput.text.toString(),
-                    binding.descriptionInput.text.toString()
-
-                )
-                val newNotiLocationTask = NotiLocationTask(
-                    maxSpeed = if (binding.maxSpeedEnabledInput.isChecked) {
-                        getMaxSpeedValue()
-                    } else {
-                        null
-                    },
-                    distance = binding.distanceInput.text.toString().toFloatOrNull(),
-                    triggerOnExit = binding.triggerOnExitInput.isChecked,
-                    task = newTask
-                )
-
-                val action = CreateTaskFragmentDirections.actionCreateTaskFragmentToMapsFragment(
-                    newNotiLocationTask
-                )
-
-                v.findNavController().navigate(action)
-            }
+        if (validateInputs()) {
+            closeKeyboard()
+            val filledNotiLocationTask =
+                fillNotiLocationTaskFromInputs(notiLocationTask ?: NotiLocationTask())
+            handleNavigationOnSubmit(v, filledNotiLocationTask, defaultToMap)
         }
     }
 }

@@ -30,6 +30,7 @@
     <string name="triggerSpeedText">Max speed to trigger notification (mph)</string>
     <string name="triggerOnExitText">Trigger notification on exiting location</string>
     <string name="snackbarItemRemoved">1 item removed</string>
+    <string name="snackbarItemUpdated">1 item completed</string>
     <string name="snackbarUndo">UNDO</string>
     <string name="submitContentDescription">Submit</string>
     <string name="deleteContentDescription">Delete</string>

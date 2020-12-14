@@ -37,6 +37,8 @@ class MainActivity : AppCompatActivity() {
             addGeofencesRequest
         )
 
+        HandleGeofences.getInstance(this).create()
+
         val binding =
             DataBindingUtil.setContentView<ActivityMainBinding>(this, R.layout.activity_main)
         val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this)
@@ -49,7 +51,6 @@ class MainActivity : AppCompatActivity() {
 
 //        val navController = this.findNavController(R.id.navHostFragment)
 //        NavigationUI.setupActionBarWithNavController(this, navController)
-
 
 
         //val viewModel = ViewModelProvider(this).get(NotiLocationsViewModel::class.java)

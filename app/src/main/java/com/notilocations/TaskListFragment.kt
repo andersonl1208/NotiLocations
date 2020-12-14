@@ -4,8 +4,6 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.core.view.isEmpty
-import androidx.core.view.isNotEmpty
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
@@ -15,7 +13,6 @@ import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.notilocations.database.FullLocationTask
 import com.notilocations.databinding.FragmentTaskListBinding
-import kotlinx.android.synthetic.main.fragment_task_list.*
 
 class TaskListFragment : Fragment() {
     override fun onCreateView(
@@ -58,7 +55,7 @@ class TaskListFragment : Fragment() {
                 }
             })
 
-        val swipeHandler = SwipeToDeleteCallback(requireContext(), recyclerAdapter)
+        val swipeHandler = SwipeNotiLocationTaskCallback(requireContext(), recyclerAdapter)
         val itemTouchHelper = ItemTouchHelper(swipeHandler)
         itemTouchHelper.attachToRecyclerView(binding.taskRecycler)
 
