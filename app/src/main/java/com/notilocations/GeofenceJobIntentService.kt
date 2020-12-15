@@ -53,8 +53,6 @@ class GeofenceJobIntentService : JobIntentService() {
             fusedLocationClient.lastLocation.addOnSuccessListener { location: Location? ->
                 if (location != null && location.hasSpeed()) {
 
-                    val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this)
-
                     val defaultMaxSpeed =
                         if (sharedPreferences.getBoolean("max_speed_enabled", false)) {
                             sharedPreferences.getFloat("max_speed", Float.MAX_VALUE)

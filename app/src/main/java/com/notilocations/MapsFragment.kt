@@ -1,17 +1,23 @@
 package com.notilocations
 
+import android.Manifest
+import android.content.pm.PackageManager
 import android.graphics.Color
+import android.location.Location
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.EditText
 import androidx.appcompat.app.AlertDialog
+import androidx.core.app.ActivityCompat
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.findNavController
+import androidx.preference.PreferenceManager
+import com.google.android.gms.location.LocationServices
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
@@ -30,11 +36,6 @@ class MapsFragment : Fragment(), OnMapReadyCallback {
     private lateinit var currentView: View
 
     private lateinit var binding: FragmentMapsBinding
-
-    //    private lateinit var locations: LiveData<List<FullLocationTask>>
-    private lateinit var locations: List<FullLocationTask>
-
-    //private val args: NotiLocationTask? =
 
     private val callback = OnMapReadyCallback { googleMap ->
         map = googleMap
@@ -91,16 +92,14 @@ class MapsFragment : Fragment(), OnMapReadyCallback {
 
 
         // Moving camera to location
-        map.moveCamera(CameraUpdateFactory.newLatLngZoom(locationToZoomTo(), 12F))
-
-
+        zoomToLocation()
     }
 
     private fun handleNewLocation(notiLocation: NotiLocation?) {
 
         val viewModel = ViewModelProvider(this).get(NotiLocationsViewModel::class.java)
 
-        var notiLocationTask: NotiLocationTask;
+        var notiLocationTask: NotiLocationTask
 
         try {
 
@@ -141,11 +140,11 @@ class MapsFragment : Fragment(), OnMapReadyCallback {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         currentView = view
         val mapFragment = childFragmentManager.findFragmentById(R.id.map) as SupportMapFragment?
-        mapFragment?.getMapAsync(callback);
+        mapFragment?.getMapAsync(callback)
 
     }
 
-    // This function does nothing and is never called but has to be here for the interface to work.
+    // This function does nothing and is never called
     override fun onMapReady(googleMap: GoogleMap?) {}
 
 
@@ -167,18 +166,17 @@ class MapsFragment : Fragment(), OnMapReadyCallback {
 
                     locationTasks.forEach { locationTask ->
 
-                        var name = locationTask.location.name;
+                        var name = locationTask.location.name
                         if (name.equals(""))
                             name = locationTask.task.title
 
+                        val sharedPreferences =
+                            PreferenceManager.getDefaultSharedPreferences(context)
 
-                        // Distance is in meters
-                        var distance: Double = 0.0
-
-                        if (locationTask.locationTask.distance != null) {
-                            println("here: " + locationTask.locationTask.distance)
-                            distance = locationTask.locationTask.distance * 1609.34
-                        }
+                        val distance =
+                            (locationTask.locationTask.distance
+                                ?: sharedPreferences.getString("distance", "")
+                                    ?.toFloatOrNull() ?: 1.0F) * 1609.34F
 
                         var locationCoords =
                             LatLng(locationTask.location.lat, locationTask.location.lng)
@@ -189,7 +187,7 @@ class MapsFragment : Fragment(), OnMapReadyCallback {
                                 CircleOptions()
                                     .center(locationCoords)
                                     // Radius is in meters
-                                    .radius(distance)
+                                    .radius(distance.toDouble())
                                     .strokeWidth(4F)
                                     .strokeColor(Color.argb((.5 * 255).toInt(), 0, 128, 255))
                                     .fillColor(Color.argb((.2 * 255).toInt(), 56, 255, 255))
@@ -200,7 +198,7 @@ class MapsFragment : Fragment(), OnMapReadyCallback {
                                 CircleOptions()
                                     .center(locationCoords)
                                     // Radius is in meters
-                                    .radius(distance)
+                                    .radius(distance.toDouble())
                                     .strokeWidth(4F)
                                     .strokeColor(Color.argb((.3 * 255).toInt(), 255, 0, 0))
                                     .fillColor(Color.argb((.1 * 255).toInt(), 255, 0, 0))
@@ -218,28 +216,32 @@ class MapsFragment : Fragment(), OnMapReadyCallback {
             })
     }
 
-    private fun locationToZoomTo(): LatLng {
-        var locationToZoom = LatLng(40.7, -73.99);
+    private fun zoomToLocation() {
 
+        val fusedLocationClient = LocationServices.getFusedLocationProviderClient(requireActivity())
 
-        val viewModel = ViewModelProvider(this).get(NotiLocationsViewModel::class.java)
+        if (ActivityCompat.checkSelfPermission(
+                requireActivity(),
+                Manifest.permission.ACCESS_FINE_LOCATION
+            ) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
+                requireActivity(),
+                Manifest.permission.ACCESS_COARSE_LOCATION
+            ) != PackageManager.PERMISSION_GRANTED
+        ) {
+            return
+        }
 
-        viewModel.getActiveFullLocationTasks().observe(viewLifecycleOwner,
-            Observer<List<FullLocationTask>> { locationTasks ->
-
-                // Right now it just gets the first element in the database
-                if (locationTasks.isNotEmpty()) {
-                    locationToZoom =
+        fusedLocationClient.lastLocation.addOnSuccessListener { location: Location? ->
+            if (location != null) {
+                map.moveCamera(
+                    CameraUpdateFactory.newLatLngZoom(
                         LatLng(
-                            locationTasks.get(locationTasks.size - 1).location.lat,
-                            locationTasks.get(locationTasks.size - 1).location.lng
-                        );
-                }
-
-            })
-
-
-        return locationToZoom
+                            location.latitude,
+                            location.longitude
+                        ), 12F
+                    )
+                )
+            }
+        }
     }
-
 }
