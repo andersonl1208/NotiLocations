@@ -10,14 +10,13 @@
         android:background="@color/gray">
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
-            android:id="@+id/settingButton"
+            android:id="@+id/settingsButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/padding"
             android:layout_marginEnd="@dimen/padding"
             android:layout_marginBottom="@dimen/padding"
             android:contentDescription="@string/settingsDescription"
-            android:src="@drawable/gear_icon"
             android:text="@string/add_task"
             app:backgroundTint="@color/weldonBlue"
             app:layout_constraintBottom_toBottomOf="parent"

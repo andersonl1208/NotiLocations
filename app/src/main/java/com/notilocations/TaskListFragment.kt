@@ -1,14 +1,17 @@
 package com.notilocations
 
+import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.findNavController
+import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.notilocations.database.FullLocationTask
@@ -27,6 +30,13 @@ class TaskListFragment : Fragment() {
             false
         )
 
+        val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this.context)
+        if (sharedPreferences?.getBoolean("dark_theme", false) == true) {
+            binding.settingsButton.setImageResource(R.drawable.gear_icon_white)
+        } else {
+            binding.settingsButton.setImageResource(R.drawable.gear_icon)
+        }
+
         val recyclerLayout = LinearLayoutManager(this.context)
         val recyclerAdapter = TaskListAdapter(this)
 
@@ -35,6 +45,9 @@ class TaskListFragment : Fragment() {
             layoutManager = recyclerLayout
             adapter = recyclerAdapter
         }
+
+
+
 
         val viewModel = ViewModelProvider(this).get(NotiLocationsViewModel::class.java)
         viewModel.getActiveFullLocationTasks()
@@ -64,7 +77,7 @@ class TaskListFragment : Fragment() {
             v.findNavController().navigate(action)
         }
 
-        binding.settingButton.setOnClickListener { v: View ->
+        binding.settingsButton.setOnClickListener { v: View ->
             val action = SwipeViewFragmentDirections.actionSwipeViewToSettingsFragment()
             v.findNavController().navigate(action)
         }

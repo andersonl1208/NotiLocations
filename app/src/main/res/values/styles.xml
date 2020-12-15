@@ -6,11 +6,12 @@
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
         <item name="android:colorForeground">@color/colorForeground</item>
+
     </style>
 
-    <!--    <style name="DarkMode" parent="Theme.MaterialComponents.DayNight">-->
-    <!--        <item name="colorPrimary">@color/Black</item>-->
-    <!--        <item name="colorPrimaryDark">@color/darkSurface</item>-->
-    <!--        <item name="colorAccent">@color/colorAccent</item>-->
-    <!--    </style>-->
+    <style name="DarkMode" parent="Theme.MaterialComponents.DayNight">
+        <item name="colorPrimary">@color/Black</item>
+        <item name="colorPrimaryDark">@color/darkSurface</item>
+        <item name="colorAccent">@color/colorAccent</item>
+    </style>
 </resources>
