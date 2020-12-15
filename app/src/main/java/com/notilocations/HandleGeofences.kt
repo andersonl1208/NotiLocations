@@ -41,7 +41,6 @@ class HandleGeofences private constructor(val context: Context) {
         }
     }
 
-
     private fun createGeofences() {
         if (ActivityCompat.checkSelfPermission(
                 context,
