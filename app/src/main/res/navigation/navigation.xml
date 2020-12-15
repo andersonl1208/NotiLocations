@@ -67,13 +67,4 @@
             android:id="@+id/action_aboutFragment2_to_swipeView"
             app:destination="@id/swipeView" />
     </fragment>
-    <fragment
-        android:id="@+id/popUpMapsFragment"
-        android:name="com.notilocations.PopUpMapsFragment"
-        android:label="fragment_pop_up_maps"
-        tools:layout="@layout/fragment_pop_up_maps" >
-        <action
-            android:id="@+id/action_popUpMapsFragment_to_createTaskFragment"
-            app:destination="@id/createTaskFragment" />
-    </fragment>
 </navigation>
