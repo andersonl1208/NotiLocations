@@ -145,7 +145,7 @@ class MapsFragment : Fragment(), OnMapReadyCallback {
 
     }
 
-    // This function does nothing and is never called
+    // This function does nothing and is never called but has to be here for the interface to work.
     override fun onMapReady(googleMap: GoogleMap?) {}
 
 
@@ -183,16 +183,29 @@ class MapsFragment : Fragment(), OnMapReadyCallback {
                         var locationCoords =
                             LatLng(locationTask.location.lat, locationTask.location.lng)
 
+                        if (!locationTask.locationTask.triggerOnExit) {
 
-                        this.map.addCircle(
-                            CircleOptions()
-                                .center(locationCoords)
-                                // Radius is in meters
-                                .radius(distance)
-                                .strokeWidth(4F)
-                                .strokeColor(Color.argb((.5 * 255).toInt(), 0, 128, 255))
-                                .fillColor(Color.argb((.2 * 255).toInt(), 56, 255, 255))
-                        )
+                            this.map.addCircle(
+                                CircleOptions()
+                                    .center(locationCoords)
+                                    // Radius is in meters
+                                    .radius(distance)
+                                    .strokeWidth(4F)
+                                    .strokeColor(Color.argb((.5 * 255).toInt(), 0, 128, 255))
+                                    .fillColor(Color.argb((.2 * 255).toInt(), 56, 255, 255))
+                            )
+
+                        } else {
+                            this.map.addCircle(
+                                CircleOptions()
+                                    .center(locationCoords)
+                                    // Radius is in meters
+                                    .radius(distance)
+                                    .strokeWidth(4F)
+                                    .strokeColor(Color.argb((.3 * 255).toInt(), 255, 0, 0))
+                                    .fillColor(Color.argb((.1 * 255).toInt(), 255, 0, 0))
+                            )
+                        }
 
                         this.map.addMarker(
                             MarkerOptions()
@@ -218,8 +231,8 @@ class MapsFragment : Fragment(), OnMapReadyCallback {
                 if (locationTasks.isNotEmpty()) {
                     locationToZoom =
                         LatLng(
-                            locationTasks.get(locationTasks.size -1).location.lat,
-                            locationTasks.get(locationTasks.size -1).location.lng
+                            locationTasks.get(locationTasks.size - 1).location.lat,
+                            locationTasks.get(locationTasks.size - 1).location.lng
                         );
                 }
 
@@ -229,37 +242,4 @@ class MapsFragment : Fragment(), OnMapReadyCallback {
         return locationToZoom
     }
 
-
-//    /** Override the onRequestPermissionResult to use EasyPermissions */
-//    override fun onRequestPermissionsResult(
-//        requestCode: Int,
-//        permissions: Array<out String>,
-//        grantResults: IntArray
-//    ) {
-//        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-//        EasyPermissions.onRequestPermissionsResult(requestCode, permissions, grantResults, this)
-//    }
-
-    /**
-     * enableMyLocation() will enable the location of the map if the user has given permission
-     * for the app to access their device location.
-     * Android Studio requires an explicit check before setting map.isMyLocationEnabled to true
-     * but we are using EasyPermissions to handle it so we can suppress the "MissingPermission"
-     * check.
-     */
-//    @SuppressLint("MissingPermission")
-//    @AfterPermissionGranted(R.string.location)
-//    private fun enableMyLocation() {
-//        if (hasLocationPermission()) {
-//            map.isMyLocationEnabled = true
-//        } else {
-//            EasyPermissions.requestPermissions(this, getString(R.string.location), 0,
-//                Manifest.permission.ACCESS_FINE_LOCATION
-//            )
-//        }
-//    }
-//
-//    private fun hasLocationPermission(): Boolean {
-//        return EasyPermissions.hasPermissions(this.requireContext(), Manifest.permission.ACCESS_FINE_LOCATION)
-//    }
 }
