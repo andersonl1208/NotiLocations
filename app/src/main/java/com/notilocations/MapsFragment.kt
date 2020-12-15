@@ -22,9 +22,7 @@ import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
-import com.google.android.gms.maps.model.CircleOptions
-import com.google.android.gms.maps.model.LatLng
-import com.google.android.gms.maps.model.MarkerOptions
+import com.google.android.gms.maps.model.*
 import com.notilocations.database.FullLocationTask
 import com.notilocations.databinding.FragmentMapsBinding
 
@@ -76,21 +74,19 @@ class MapsFragment : Fragment(), OnMapReadyCallback {
             }
         }
 
-
         // Set all the settings of the map to match the current state of the checkboxes
         with(map.uiSettings) {
             isZoomControlsEnabled = true
             isCompassEnabled = true
-            isMyLocationButtonEnabled = false
+            isMyLocationButtonEnabled = true
             isIndoorLevelPickerEnabled = true
             isMapToolbarEnabled = true
             isZoomGesturesEnabled = true
             isScrollGesturesEnabled = true
-            isTiltGesturesEnabled = true
+            isTiltGesturesEnabled = false
             isRotateGesturesEnabled = true
         }
-
-
+        
         // Moving camera to location
         zoomToLocation()
     }
@@ -209,11 +205,14 @@ class MapsFragment : Fragment(), OnMapReadyCallback {
                             MarkerOptions()
                                 .position(locationCoords)
                                 .title(name)
+//                                .icon(BitmapDescriptorFactory.fromResource(R.drawable.gear_icon))
                         ).tag = locationTask.locationTask.id
 
                     }
                 }
             })
+
+
     }
 
     private fun zoomToLocation() {
@@ -244,4 +243,7 @@ class MapsFragment : Fragment(), OnMapReadyCallback {
             }
         }
     }
+
+
+
 }

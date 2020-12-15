@@ -85,30 +85,10 @@ class HandleGeofences private constructor(val context: Context) {
                         addOnSuccessListener {
                             Log.i("MyLogMessage", "Successfully added geofences")
 
-                            val notificationBuilder =
-                                NotificationCompat.Builder(context, "0")
-                                    .setSmallIcon(R.drawable.ic_stat_temp_notification)
-                                    .setContentTitle("Successfully added geofences")
-                                    .setPriority(NotificationCompat.PRIORITY_DEFAULT)
-
-                            with(NotificationManagerCompat.from(context)) {
-                                // notificationId is a unique int for each notification that you must define
-                                notify(848184181, notificationBuilder.build())
-                            }
                         }
                         addOnFailureListener {
                             Log.i("MyLogMessage", "Failed to add geofences")
 
-                            val notificationBuilder =
-                                NotificationCompat.Builder(context, "0")
-                                    .setSmallIcon(R.drawable.ic_stat_temp_notification)
-                                    .setContentTitle("Failed to add geofences")
-                                    .setPriority(NotificationCompat.PRIORITY_DEFAULT)
-
-                            with(NotificationManagerCompat.from(context)) {
-                                // notificationId is a unique int for each notification that you must define
-                                notify(848184182, notificationBuilder.build())
-                            }
                         }
                     }
             }
