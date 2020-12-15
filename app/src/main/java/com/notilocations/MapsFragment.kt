@@ -86,9 +86,26 @@ class MapsFragment : Fragment(), OnMapReadyCallback {
             isTiltGesturesEnabled = false
             isRotateGesturesEnabled = true
         }
-        
+
+        val notiLocationTask = try {
+            MapsFragmentArgs.fromBundle(requireArguments()).notiLocationTask
+        } catch (e: Exception) {
+            null
+        }
+
         // Moving camera to location
-        zoomToLocation()
+        if (notiLocationTask?.hasLocation() == true) {
+            map.moveCamera(
+                CameraUpdateFactory.newLatLngZoom(
+                    LatLng(
+                        notiLocationTask.location?.lat ?: 0.0,
+                        notiLocationTask.location?.lng ?: 0.0
+                    ), 12F
+                )
+            )
+        } else {
+            zoomToLocation()
+        }
     }
 
     private fun handleNewLocation(notiLocation: NotiLocation?) {
@@ -211,8 +228,6 @@ class MapsFragment : Fragment(), OnMapReadyCallback {
                     }
                 }
             })
-
-
     }
 
     private fun zoomToLocation() {
@@ -243,7 +258,4 @@ class MapsFragment : Fragment(), OnMapReadyCallback {
             }
         }
     }
-
-
-
 }
