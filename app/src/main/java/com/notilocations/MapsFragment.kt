@@ -60,7 +60,6 @@ class MapsFragment : Fragment(), OnMapReadyCallback {
                             input.text.toString(),
                             latLng.latitude,
                             latLng.longitude
-
                         )
                     )
                     dialog.dismiss()
@@ -214,14 +213,13 @@ class MapsFragment : Fragment(), OnMapReadyCallback {
 
         viewModel.getActiveFullLocationTasks().observe(viewLifecycleOwner,
             Observer<List<FullLocationTask>> { locationTasks ->
-                println("========= Reloading Map")
 
                 // Right now it just gets the first element in the database
                 if (locationTasks.isNotEmpty()) {
                     locationToZoom =
                         LatLng(
-                            locationTasks.get(0).location.lat,
-                            locationTasks.get(0).location.lng
+                            locationTasks.get(locationTasks.size -1).location.lat,
+                            locationTasks.get(locationTasks.size -1).location.lng
                         );
                 }
 
