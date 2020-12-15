@@ -114,7 +114,8 @@ class HandleGeofences private constructor(val context: Context) {
 
     private fun createGeofencingRequest(geofences: List<Geofence>): GeofencingRequest {
         return GeofencingRequest.Builder().apply {
-            setInitialTrigger(GeofencingRequest.INITIAL_TRIGGER_ENTER)
+//            setInitialTrigger(GeofencingRequest.INITIAL_TRIGGER_ENTER)
+            setInitialTrigger(0)
             addGeofences(geofences)
         }.build()
     }
