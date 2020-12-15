@@ -8,8 +8,6 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.util.Log
 import androidx.core.app.ActivityCompat
-import androidx.core.app.NotificationCompat
-import androidx.core.app.NotificationManagerCompat
 import androidx.preference.PreferenceManager
 import com.google.android.gms.location.Geofence
 import com.google.android.gms.location.GeofencingClient
@@ -84,31 +82,9 @@ class HandleGeofences private constructor(val context: Context) {
                     .run {
                         addOnSuccessListener {
                             Log.i("MyLogMessage", "Successfully added geofences")
-
-                            val notificationBuilder =
-                                NotificationCompat.Builder(context, "0")
-                                    .setSmallIcon(R.drawable.ic_stat_temp_notification)
-                                    .setContentTitle("Successfully added geofences")
-                                    .setPriority(NotificationCompat.PRIORITY_DEFAULT)
-
-                            with(NotificationManagerCompat.from(context)) {
-                                // notificationId is a unique int for each notification that you must define
-                                notify(848184181, notificationBuilder.build())
-                            }
                         }
                         addOnFailureListener {
                             Log.i("MyLogMessage", "Failed to add geofences")
-
-                            val notificationBuilder =
-                                NotificationCompat.Builder(context, "0")
-                                    .setSmallIcon(R.drawable.ic_stat_temp_notification)
-                                    .setContentTitle("Failed to add geofences")
-                                    .setPriority(NotificationCompat.PRIORITY_DEFAULT)
-
-                            with(NotificationManagerCompat.from(context)) {
-                                // notificationId is a unique int for each notification that you must define
-                                notify(848184182, notificationBuilder.build())
-                            }
                         }
                     }
             }

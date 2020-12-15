@@ -90,9 +90,27 @@ class MapsFragment : Fragment(), OnMapReadyCallback {
             isRotateGesturesEnabled = true
         }
 
+        val viewModel = ViewModelProvider(this).get(NotiLocationsViewModel::class.java)
+
+        val notiLocationTask = try {
+            MapsFragmentArgs.fromBundle(requireArguments()).notiLocationTask
+        } catch (e: Exception) {
+            null
+        }
 
         // Moving camera to location
-        zoomToLocation()
+        if (notiLocationTask?.hasLocation() == true) {
+            map.moveCamera(
+                CameraUpdateFactory.newLatLngZoom(
+                    LatLng(
+                        notiLocationTask.location?.lat ?: 0.0,
+                        notiLocationTask.location?.lng ?: 0.0
+                    ), 12F
+                )
+            )
+        } else {
+            zoomToLocation()
+        }
     }
 
     private fun handleNewLocation(notiLocation: NotiLocation?) {
