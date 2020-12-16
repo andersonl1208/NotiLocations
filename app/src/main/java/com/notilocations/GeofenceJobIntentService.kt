@@ -3,6 +3,7 @@ package com.notilocations
 import android.Manifest
 import android.content.Context
 import android.content.Intent
+import android.content.SharedPreferences
 import android.content.pm.PackageManager
 import android.location.Location
 import android.speech.tts.TextToSpeech
@@ -26,13 +27,14 @@ import java.util.*
 class GeofenceJobIntentService : JobIntentService() {
 
     private var mTextToSpeech: TextToSpeech? = null
-    private val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this)
 
     /**
      * Takes a geofence intent and sends notifications for the associated location tasks.
      * @param intent The geofencing event intent.
      */
     override fun onHandleWork(intent: Intent) {
+        val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this)
+
         val geofencingEvent = GeofencingEvent.fromIntent(intent)
 
         if (geofencingEvent.hasError()) {
@@ -55,7 +57,7 @@ class GeofenceJobIntentService : JobIntentService() {
         }
 
         LocationServices.getFusedLocationProviderClient(this).lastLocation.addOnSuccessListener { location: Location? ->
-            locationRetrieved(location, locationTasks)
+            locationRetrieved(location, locationTasks, sharedPreferences)
         }.addOnFailureListener {
             Log.e("MyLogMessage", "Last location failed to be retrieved")
         }
@@ -65,8 +67,13 @@ class GeofenceJobIntentService : JobIntentService() {
      * When the current location is retrieved, runs through each location task and sends a notification if the current speed is less than the location tasks's max speed.
      * @param location The current location of the user.
      * @param locationTasks The list of location tasks to send notifications for.
+     * @param sharedPreferences The shared preferences object to get the preferences from.
      */
-    private fun locationRetrieved(location: Location?, locationTasks: List<FullLocationTask>) {
+    private fun locationRetrieved(
+        location: Location?,
+        locationTasks: List<FullLocationTask>,
+        sharedPreferences: SharedPreferences
+    ) {
         val currentSpeed = location?.speed ?: 0.0f
         val defaultMaxSpeed =
             if (sharedPreferences.getBoolean("max_speed_enabled", false)) {
@@ -81,7 +88,7 @@ class GeofenceJobIntentService : JobIntentService() {
                 locationTask.locationTask.distance ?: defaultMaxSpeed
 
             if (currentSpeed * METERS_SEC_TO_MILES_HOUR < maxSpeed) {
-                sendNotification(locationTask)
+                sendNotification(locationTask, sharedPreferences)
             }
         }
     }
@@ -124,8 +131,12 @@ class GeofenceJobIntentService : JobIntentService() {
     /**
      * Sends a notification for the location task and reads it aloud if enabled.
      * @param locationTask The location task to send a notification for.
+     * @param sharedPreferences The shared preferences object to get the preferences from.
      */
-    private fun sendNotification(locationTask: FullLocationTask) {
+    private fun sendNotification(
+        locationTask: FullLocationTask,
+        sharedPreferences: SharedPreferences
+    ) {
         Log.i("MyLogMessage", "sendNotification: " + locationTask.task.title)
         val notificationBuilder =
             NotificationCompat.Builder(this, getString(R.string.primary_notification_channel_id))
