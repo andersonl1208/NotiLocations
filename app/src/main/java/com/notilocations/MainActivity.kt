@@ -9,8 +9,6 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProvider
-import androidx.navigation.findNavController
-import androidx.navigation.ui.NavigationUI
 import androidx.preference.PreferenceManager
 import androidx.work.ExistingPeriodicWorkPolicy
 import androidx.work.PeriodicWorkRequestBuilder
@@ -20,14 +18,36 @@ import com.google.android.gms.common.GoogleApiAvailability
 import com.notilocations.databinding.ActivityMainBinding
 import java.util.concurrent.TimeUnit
 
-
+/**
+ * Main activity for the app. Created when the app starts up.
+ */
 class MainActivity : AppCompatActivity() {
 
+    /**
+     * Sets up the main activity for the app, sets up geofences, and sets dark mode if necessary.
+     * @param savedInstanceState The previously saved state of the activity to load if it exists.
+     */
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         createNotificationChannel()
 
+        DataBindingUtil.setContentView<ActivityMainBinding>(this, R.layout.activity_main)
+
+        setupGeofences()
+        handleDarkMode()
+
+        val response = GoogleApiAvailability.getInstance().isGooglePlayServicesAvailable(this)
+        if (response != ConnectionResult.SUCCESS) {
+            GoogleApiAvailability.getInstance().getErrorDialog(this, response, 1)
+                .show()
+        }
+    }
+
+    /**
+     * Handles geofence related setup.
+     */
+    private fun setupGeofences() {
         val addGeofencesRequest =
             PeriodicWorkRequestBuilder<AddGeofencesWorker>(15, TimeUnit.MINUTES)
                 .build()
@@ -39,9 +59,12 @@ class MainActivity : AppCompatActivity() {
         )
 
         HandleGeofences.getInstance(this).create()
+    }
 
-        val binding =
-            DataBindingUtil.setContentView<ActivityMainBinding>(this, R.layout.activity_main)
+    /**
+     * If the dark theme is enabled, sets the app to use it.
+     */
+    private fun handleDarkMode() {
         val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this)
 
         if (sharedPreferences?.getBoolean("dark_theme", false) == true) {
@@ -49,20 +72,19 @@ class MainActivity : AppCompatActivity() {
         } else {
             AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
         }
-
-        val response = GoogleApiAvailability.getInstance().isGooglePlayServicesAvailable(this)
-        if (response != ConnectionResult.SUCCESS) {
-            GoogleApiAvailability.getInstance().getErrorDialog(this, response, 1)
-                .show()
-        }
     }
 
+    /**
+     * Cleans up the repository when the main activity is paused.
+     */
     override fun onPause() {
         ViewModelProvider(this).get(NotiLocationsViewModel::class.java).cleanUp()
         super.onPause()
     }
 
-
+    /**
+     * Creates a notification channel for location notifications on builds above Android O.
+     */
     private fun createNotificationChannel() {
         // Create the NotificationChannel, but only on API 26+ because
         // the NotificationChannel class is new and not in the support library
@@ -82,10 +104,5 @@ class MainActivity : AppCompatActivity() {
                 getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
             notificationManager.createNotificationChannel(channel)
         }
-    }
-
-    override fun onSupportNavigateUp(): Boolean {
-        val navController = this.findNavController(R.id.navHostFragment)
-        return NavigationUI.navigateUp(navController, null)
     }
 }

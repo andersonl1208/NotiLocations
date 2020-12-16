@@ -12,7 +12,7 @@ import com.google.android.material.tabs.TabLayoutMediator
 //collection of fragments
 class SwipeViewFragment : Fragment() {
     // When requested, this adapter returns a fragment of our choosing
-    private lateinit var SwipeViewAdapter: SwipeViewAdapter
+    private lateinit var swipeViewAdapter: SwipeViewAdapter
     private lateinit var viewPager: ViewPager2
 
     override fun onCreateView(
@@ -25,9 +25,9 @@ class SwipeViewFragment : Fragment() {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        SwipeViewAdapter = SwipeViewAdapter(this)
+        swipeViewAdapter = SwipeViewAdapter(this)
         viewPager = view.findViewById(R.id.pager)
-        viewPager.adapter = SwipeViewAdapter
+        viewPager.adapter = swipeViewAdapter
         val tabLayout = view.findViewById<TabLayout>(R.id.tab_layout)
 
         //populate the tabs

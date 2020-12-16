@@ -22,7 +22,9 @@ import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
-import com.google.android.gms.maps.model.*
+import com.google.android.gms.maps.model.CircleOptions
+import com.google.android.gms.maps.model.LatLng
+import com.google.android.gms.maps.model.MarkerOptions
 import com.notilocations.database.FullLocationTask
 import com.notilocations.databinding.FragmentMapsBinding
 
@@ -104,7 +106,7 @@ class MapsFragment : Fragment(), OnMapReadyCallback {
                 )
             )
         } else {
-            zoomToLocation()
+            zoomToUsersLocation()
         }
     }
 
@@ -138,6 +140,14 @@ class MapsFragment : Fragment(), OnMapReadyCallback {
         }
     }
 
+    /**
+     * Inflates the fragment and sets the binding variable.
+     *
+     * @param inflater The inflater to use to inflate the fragment layout.
+     * @param container The container to place the fragment in.
+     * @param savedInstanceState The previously saved state of the fragment if it exists.
+     * @return The view returned by the inflater.
+     */
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -150,6 +160,11 @@ class MapsFragment : Fragment(), OnMapReadyCallback {
         return binding.root
     }
 
+    /**
+     * Called when the view has been created. Sets up the map fragment and gets the map.
+     * @param view The view that was created.
+     * @param savedInstanceState The previously saved state of the fragment, if it exists.A
+     */
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         currentView = view
         val mapFragment = childFragmentManager.findFragmentById(R.id.map) as SupportMapFragment?
@@ -163,7 +178,6 @@ class MapsFragment : Fragment(), OnMapReadyCallback {
 
     /**
      * Reloads the locations on maps so it updates with the database
-     *
      */
     private fun createLocationObserver() {
 
@@ -171,7 +185,6 @@ class MapsFragment : Fragment(), OnMapReadyCallback {
 
         viewModel.getActiveFullLocationTasks().observe(viewLifecycleOwner,
             Observer<List<FullLocationTask>> { locationTasks ->
-                println("========= Reloading Map")
 
                 map.clear()
 
@@ -194,29 +207,11 @@ class MapsFragment : Fragment(), OnMapReadyCallback {
                         var locationCoords =
                             LatLng(locationTask.location.lat, locationTask.location.lng)
 
-                        if (!locationTask.locationTask.triggerOnExit) {
-
-                            this.map.addCircle(
-                                CircleOptions()
-                                    .center(locationCoords)
-                                    // Radius is in meters
-                                    .radius(distance.toDouble())
-                                    .strokeWidth(4F)
-                                    .strokeColor(Color.argb((.5 * 255).toInt(), 0, 128, 255))
-                                    .fillColor(Color.argb((.2 * 255).toInt(), 56, 255, 255))
-                            )
-
-                        } else {
-                            this.map.addCircle(
-                                CircleOptions()
-                                    .center(locationCoords)
-                                    // Radius is in meters
-                                    .radius(distance.toDouble())
-                                    .strokeWidth(4F)
-                                    .strokeColor(Color.argb((.3 * 255).toInt(), 255, 0, 0))
-                                    .fillColor(Color.argb((.1 * 255).toInt(), 255, 0, 0))
-                            )
-                        }
+                        drawLocationCircle(
+                            locationCoords,
+                            distance.toDouble(),
+                            locationTask.locationTask.triggerOnExit
+                        )
 
                         this.map.addMarker(
                             MarkerOptions()
@@ -230,7 +225,39 @@ class MapsFragment : Fragment(), OnMapReadyCallback {
             })
     }
 
-    private fun zoomToLocation() {
+    /**
+     * Draws a circle on the map around a location.
+     * @param locationCoords The coordinates of the center of the circle.
+     * @param distance The radius of the circle.
+     * @param triggerOnExit Whether or not the associated location task is triggered on exit.
+     */
+    private fun drawLocationCircle(
+        locationCoords: LatLng,
+        distance: Double,
+        triggerOnExit: Boolean
+    ) {
+        var strokeColor = Color.argb((.5 * 255).toInt(), 0, 128, 255)
+        var fillColor = Color.argb((.2 * 255).toInt(), 56, 255, 255)
+
+        if (triggerOnExit) {
+            strokeColor = Color.argb((.3 * 255).toInt(), 255, 0, 0)
+            fillColor = Color.argb((.1 * 255).toInt(), 255, 0, 0)
+        }
+
+        this.map.addCircle(
+            CircleOptions()
+                .center(locationCoords)
+                .radius(distance)
+                .strokeWidth(4F)
+                .strokeColor(strokeColor)
+                .fillColor(fillColor)
+        )
+    }
+
+    /**
+     * Zooms the map to the users location if it is available.
+     */
+    private fun zoomToUsersLocation() {
 
         val fusedLocationClient = LocationServices.getFusedLocationProviderClient(requireActivity())
 

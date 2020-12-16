@@ -1,6 +1,5 @@
 package com.notilocations
 
-import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -13,10 +12,13 @@ import com.notilocations.database.FullLocationTask
 import com.notilocations.database.LocationTask
 
 
+/**
+ * Adapter class for location tasks. Creates each of the location task views.
+ * @property locationTasks A list of location tasks to display.
+ */
 class TaskListAdapter(val fragment: TaskListFragment) :
     RecyclerView.Adapter<TaskListAdapter.TaskHolder>() {
     private var locationTasks: List<FullLocationTask>? = null
-    private val bundle = Bundle()
 
     class TaskHolder(val taskView: View) : RecyclerView.ViewHolder(taskView)
 
@@ -25,6 +27,11 @@ class TaskListAdapter(val fragment: TaskListFragment) :
         notifyDataSetChanged()
     }
 
+    /**
+     * Gets the location task at the given position in the adapter.
+     * @param position The position in the adapter of the location task to get.
+     * @return The location task at the given position, or null if the position was invalid.
+     */
     private fun getLocationTaskAtPosition(position: Int): FullLocationTask? {
         if (position >= 0 && position < locationTasks?.size ?: 0) {
             return locationTasks?.elementAt(position)
@@ -33,6 +40,10 @@ class TaskListAdapter(val fragment: TaskListFragment) :
         return null
     }
 
+    /**
+     * Removes the location task from the database at the given position in the adapter, and shows an undo snackbar.
+     * @param position The position in the adapter of the location task to remove.
+     */
     fun removeLocationTask(position: Int) {
         val locationTaskToRemove = getLocationTaskAtPosition(position)?.locationTask
 
@@ -43,6 +54,10 @@ class TaskListAdapter(val fragment: TaskListFragment) :
         }
     }
 
+    /**
+     * Sets the location task to complete in the database at the given position in the adapter, and shows an undo snackbar.
+     * @param position The position in the adapter of the location task to complete.
+     */
     fun completeLocationTask(position: Int) {
         val locationTaskToComplete = getLocationTaskAtPosition(position)?.locationTask
 
@@ -63,6 +78,10 @@ class TaskListAdapter(val fragment: TaskListFragment) :
         }
     }
 
+    /**
+     * Shows an undo snackbar for when a location task is completed, and sets the action to uncomplete it if undo is clicked.
+     * @param completedLocationTask The location task that was completed.
+     */
     private fun showUndoCompletedSnackbar(completedLocationTask: LocationTask) {
         val snackbar = Snackbar.make(
             fragment.requireView(),
@@ -90,6 +109,10 @@ class TaskListAdapter(val fragment: TaskListFragment) :
         snackbar.show()
     }
 
+    /**
+     * Shows an undo snackbar for when a location task is removed, and sets the action to re-add it if undo is clicked.
+     * @param removedLocationTask The location task that was removed.
+     */
     private fun showUndoRemovedSnackbar(removedLocationTask: LocationTask) {
 
         val snackbar = Snackbar.make(
@@ -107,6 +130,10 @@ class TaskListAdapter(val fragment: TaskListFragment) :
         snackbar.show()
     }
 
+    /**
+     * Gets the number of location tasks.
+     * @return The count of location tasks.
+     */
     override fun getItemCount(): Int {
         return locationTasks?.size ?: 0
     }

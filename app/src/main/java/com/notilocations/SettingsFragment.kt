@@ -16,7 +16,7 @@ class SettingsFragment : PreferenceFragmentCompat(),
     SharedPreferences.OnSharedPreferenceChangeListener {
 
     /**
-     * Inflates the settings fragment and sets the preferences to the correct values.
+     * Inflates the settings fragment and sets up the preference views.
      * @param savedInstanceState The previously saved state of the fragment if it exists.
      * @param rootKey The preference key of the preference screen to use as the root of the preference hierarchy
      */
@@ -34,16 +34,28 @@ class SettingsFragment : PreferenceFragmentCompat(),
 
     }
 
+    /**
+     * Registers this as an on shared preference change listener when the settings fragment is resumed.
+     */
     override fun onResume() {
         super.onResume()
         preferenceManager.sharedPreferences.registerOnSharedPreferenceChangeListener(this)
     }
 
+    /**
+     * Unregisters this as an on shared preference change listener when the settings fragment is paused.
+     */
     override fun onPause() {
         super.onPause()
         preferenceManager.sharedPreferences.unregisterOnSharedPreferenceChangeListener(this)
     }
 
+    /**
+     * Called when a shared preference changes. If the changed preference is the dark_theme preference, sets the app to dark theme. If
+     * it is max_speed_enabled, sets the max speed input to the appropriate value.
+     * @param sharedPreferences The shared preference object that was changed.
+     * @param key The key of the preference that was changed.
+     */
     override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences?, key: String?) {
         if (key == "dark_theme") {
             if (sharedPreferences?.getBoolean(key, false) == true) {

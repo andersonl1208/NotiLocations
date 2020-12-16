@@ -1,11 +1,9 @@
 package com.notilocations
 
-import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.appcompat.app.AppCompatDelegate
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
@@ -18,12 +16,13 @@ import com.notilocations.database.FullLocationTask
 import com.notilocations.databinding.FragmentTaskListBinding
 
 class TaskListFragment : Fragment() {
+    private lateinit var binding: FragmentTaskListBinding
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        val binding = DataBindingUtil.inflate<FragmentTaskListBinding>(
+        binding = DataBindingUtil.inflate(
             inflater,
             R.layout.fragment_task_list,
             container,
@@ -46,9 +45,6 @@ class TaskListFragment : Fragment() {
             adapter = recyclerAdapter
         }
 
-
-
-
         val viewModel = ViewModelProvider(this).get(NotiLocationsViewModel::class.java)
         viewModel.getActiveFullLocationTasks()
             .observe(this.viewLifecycleOwner, object : Observer<List<FullLocationTask>> {
@@ -56,11 +52,10 @@ class TaskListFragment : Fragment() {
                 override fun onChanged(t: List<FullLocationTask>?) {
                     if (t != null) {
                         adapter.setLocationTasks(t)
-                        if(adapter.itemCount == 0){
+                        if (adapter.itemCount == 0) {
                             binding.addTaskText.visibility = View.VISIBLE
                             binding.taskRecycler.visibility = View.GONE
-                        }
-                        else{
+                        } else {
                             binding.addTaskText.visibility = View.GONE
                             binding.taskRecycler.visibility = View.VISIBLE
                         }
@@ -72,6 +67,15 @@ class TaskListFragment : Fragment() {
         val itemTouchHelper = ItemTouchHelper(swipeHandler)
         itemTouchHelper.attachToRecyclerView(binding.taskRecycler)
 
+        createClickListeners()
+
+        return binding.root
+    }
+
+    /**
+     * Sets up the click listeners.
+     */
+    private fun createClickListeners() {
         binding.addTask.setOnClickListener { v: View ->
             val action = SwipeViewFragmentDirections.actionSwipeViewToCreateTaskFragment()
             v.findNavController().navigate(action)
@@ -81,7 +85,5 @@ class TaskListFragment : Fragment() {
             val action = SwipeViewFragmentDirections.actionSwipeViewToSettingsFragment()
             v.findNavController().navigate(action)
         }
-
-        return binding.root
     }
 }

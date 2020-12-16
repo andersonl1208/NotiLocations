@@ -17,6 +17,11 @@ import com.notilocations.database.FullLocationTask
 import com.notilocations.database.NotiLocationsRepository
 import java.util.concurrent.Executors
 
+/**
+ * Class to add and remove the geofences.
+ * @property geofencingClient The location services geofencing client.
+ * @property geofencePendingIntent The pending intent to use for the geofences.
+ */
 class HandleGeofences private constructor(val context: Context) {
 
     private val geofencingClient: GeofencingClient = LocationServices.getGeofencingClient(context)
@@ -26,22 +31,42 @@ class HandleGeofences private constructor(val context: Context) {
         PendingIntent.getBroadcast(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT)
     }
 
+    /**
+     * Creates geofences and removes the old geofences.
+     */
     fun create() {
-        setupGeofences()
-    }
-
-    private fun setupGeofences() {
         geofencingClient.removeGeofences(geofencePendingIntent)?.run {
             addOnSuccessListener {
-                createGeofences()
+                setupGeofences()
             }
             addOnFailureListener {
-                createGeofences()
+                setupGeofences()
             }
         }
     }
 
-    private fun createGeofences() {
+    /**
+     * Handles the setup and creation of the new geofences.
+     */
+    private fun setupGeofences() {
+
+        Executors.newSingleThreadExecutor().execute {
+            val repository =
+                NotiLocationsRepository.getInstance(context.applicationContext as Application)
+            val activeLocationTasks = repository.getActiveFullLocationTasksStatic()
+            val geofences = createGeofences(activeLocationTasks)
+
+            if (geofences.isNotEmpty()) {
+                addGeofences(geofences)
+            }
+        }
+    }
+
+    /**
+     * Creates a geofencing request with the given geofences and runs it.
+     * @param geofences The geofences to add.
+     */
+    private fun addGeofences(geofences: List<Geofence>) {
         if (ActivityCompat.checkSelfPermission(
                 context,
                 Manifest.permission.ACCESS_FINE_LOCATION
@@ -51,38 +76,44 @@ class HandleGeofences private constructor(val context: Context) {
             return
         }
 
-        Executors.newSingleThreadExecutor().execute {
-            val repository =
-                NotiLocationsRepository.getInstance(context.applicationContext as Application)
-
-            val activeLocationTasks = repository.getActiveFullLocationTasksStatic()
-
-            val geofences = mutableListOf<Geofence>()
-
-            for (locationTask in activeLocationTasks) {
-                val geofence = createGeofence(locationTask)
-                if (geofence != null) {
-                    geofences.add(geofence)
+        geofencingClient.addGeofences(
+            createGeofencingRequest(geofences),
+            geofencePendingIntent
+        )
+            .run {
+                addOnSuccessListener {
+                    Log.i("MyLogMessage", "Successfully added geofences")
+                }
+                addOnFailureListener {
+                    Log.i("MyLogMessage", "Failed to add geofences")
                 }
             }
-
-            if (geofences.size > 0) {
-                geofencingClient.addGeofences(
-                    createGeofencingRequest(geofences),
-                    geofencePendingIntent
-                )
-                    .run {
-                        addOnSuccessListener {
-                            Log.i("MyLogMessage", "Successfully added geofences")
-                        }
-                        addOnFailureListener {
-                            Log.i("MyLogMessage", "Failed to add geofences")
-                        }
-                    }
-            }
-        }
     }
 
+    /**
+     * Creates geofences for each location task and returns the list of them.
+     * @param locationTasks The location tasks to create geofences for.
+     * @return The list of geofences that were created.
+     */
+    private fun createGeofences(locationTasks: List<FullLocationTask>): List<Geofence> {
+
+        val geofences = mutableListOf<Geofence>()
+
+        for (locationTask in locationTasks) {
+            val geofence = createGeofence(locationTask)
+            if (geofence != null) {
+                geofences.add(geofence)
+            }
+        }
+
+        return geofences
+    }
+
+    /**
+     * Creates a geofence from a full location task.
+     * @param fullLocationTask The full location task to create a geofence from.
+     * @return The created geofence.
+     */
     private fun createGeofence(fullLocationTask: FullLocationTask): Geofence? {
         val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context)
 
@@ -104,6 +135,11 @@ class HandleGeofences private constructor(val context: Context) {
             .build()
     }
 
+    /**
+     * Creates and builds a geofencing request with the list of geofences.
+     * @param geofences The list of geofences to create the geofencing request for.
+     * @return The geofencing request object that was created.
+     */
     private fun createGeofencingRequest(geofences: List<Geofence>): GeofencingRequest {
         return GeofencingRequest.Builder().apply {
             setInitialTrigger(GeofencingRequest.INITIAL_TRIGGER_ENTER)
@@ -112,9 +148,18 @@ class HandleGeofences private constructor(val context: Context) {
         }.build()
     }
 
+    /**
+     * Companion object that returns an instance of the HandleGeofences class, allowing it to be used as a Singleton.
+     * @property instance Holds an instance of the HandleGeofences class after it is initialized by the first call to get the instance.
+     */
     companion object {
         private var instance: HandleGeofences? = null
 
+        /**
+         * Gets an instance of the HandleGeofences class.
+         * @param context The context the class is being created in.
+         * @return An instance of the HandleGeofences class.
+         */
         fun getInstance(context: Context): HandleGeofences {
             if (instance == null) {
                 instance = HandleGeofences(context)
