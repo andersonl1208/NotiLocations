@@ -77,6 +77,8 @@ dependencies {
     androidTestImplementation 'com.android.support.test:rules:1.0.2'
     androidTestImplementation 'junit:junit:4.12'
 
+    api 'androidx.activity:activity-ktx:1.2.0-beta02'
+    api 'androidx.fragment:fragment-ktx:1.3.0-beta02'
     // EasyPermissions
     implementation 'pub.devrel:easypermissions:3.0.0'
 
