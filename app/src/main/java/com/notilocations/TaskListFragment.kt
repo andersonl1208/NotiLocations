@@ -29,6 +29,7 @@ class TaskListFragment : Fragment() {
             false
         )
 
+        //set gear icon to different color based on the theme
         val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this.context)
         if (sharedPreferences?.getBoolean("dark_theme", false) == true) {
             binding.settingsButton.setImageResource(R.drawable.gear_icon_white)
@@ -39,6 +40,7 @@ class TaskListFragment : Fragment() {
         val recyclerLayout = LinearLayoutManager(this.context)
         val recyclerAdapter = TaskListAdapter(this)
 
+        //Links the task Recycler and our variables
         binding.taskRecycler.apply {
             setHasFixedSize(true)
             layoutManager = recyclerLayout
@@ -52,10 +54,13 @@ class TaskListFragment : Fragment() {
                 override fun onChanged(t: List<FullLocationTask>?) {
                     if (t != null) {
                         adapter.setLocationTasks(t)
+                        //if the recycler view is empty, display empty message
                         if (adapter.itemCount == 0) {
                             binding.addTaskText.visibility = View.VISIBLE
                             binding.taskRecycler.visibility = View.GONE
-                        } else {
+                        }
+                        //display recycler view as it has items in it
+                        else {
                             binding.addTaskText.visibility = View.GONE
                             binding.taskRecycler.visibility = View.VISIBLE
                         }

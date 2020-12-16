@@ -146,6 +146,11 @@ class TaskListAdapter(val fragment: TaskListFragment) :
         return TaskHolder(view)
     }
 
+    /**
+     * override onBindViewHOlder sets the value of items from binding
+     * @param holder the TaskHolder being passed through
+     * @param position position of the item
+     */
     override fun onBindViewHolder(holder: TaskHolder, position: Int) {
         val taskTitle = holder.taskView.findViewById<TextView>(R.id.titleText)
         val taskDescription = holder.taskView.findViewById<TextView>(R.id.descriptionText)
