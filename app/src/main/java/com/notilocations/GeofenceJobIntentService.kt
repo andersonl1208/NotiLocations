@@ -20,75 +20,77 @@ import com.notilocations.database.FullLocationTask
 import com.notilocations.database.NotiLocationsRepository
 import java.util.*
 
+/**
+ * Handles a geofence intent.
+ */
 class GeofenceJobIntentService : JobIntentService() {
 
+    private var mTextToSpeech: TextToSpeech? = null
+    private val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this)
+
+    /**
+     * Takes a geofence intent and sends notifications for the associated location tasks.
+     * @param intent The geofencing event intent.
+     */
     override fun onHandleWork(intent: Intent) {
         val geofencingEvent = GeofencingEvent.fromIntent(intent)
-        val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this)
-        val read = sharedPreferences.getBoolean("voice_notification" , false)
+
         if (geofencingEvent.hasError()) {
             val errorMessage = GeofenceStatusCodes.getStatusCodeString(geofencingEvent.errorCode)
             Log.e("MyLogMessage", errorMessage)
             return
         }
 
-        if (geofencingEvent.geofenceTransition == Geofence.GEOFENCE_TRANSITION_ENTER) {
-            val triggeringGeofences = geofencingEvent.triggeringGeofences
+        val locationTasks = getTriggeredLocationTasks(geofencingEvent.triggeringGeofences)
 
-            val locationTasks = getTriggeredLocationTasks(triggeringGeofences)
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
+            != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
+                this,
+                Manifest.permission.ACCESS_COARSE_LOCATION
+            )
+            != PackageManager.PERMISSION_GRANTED
+        ) {
+            Log.e("MyLogMessage", "Missing permissions")
+            return
+        }
 
-            val fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
-
-            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
-                != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
-                    this,
-                    Manifest.permission.ACCESS_COARSE_LOCATION
-                )
-                != PackageManager.PERMISSION_GRANTED
-            ) {
-                Log.e("MyLogMessage", "Missing permissions")
-                return
-            }
-
-            fusedLocationClient.lastLocation.addOnSuccessListener { location: Location? ->
-                if (location != null && location.hasSpeed()) {
-
-                    val defaultMaxSpeed =
-                        if (sharedPreferences.getBoolean("max_speed_enabled", false)) {
-                            sharedPreferences.getFloat("max_speed", Float.MAX_VALUE)
-                        } else {
-                            Float.MAX_VALUE
-                        }
-
-                    for (locationTask in locationTasks) {
-
-                        val maxSpeed: Float =
-                            locationTask.locationTask.distance ?: defaultMaxSpeed
-
-                        if (location.speed * METERS_SEC_TO_MILES_HOUR < maxSpeed) {
-                            sendNotification(locationTask)
-                            if(read){
-                                sayText(this, locationTask.task.title)
-                            }
-                        }
-                    }
-
-                } else {
-                    for (locationTask in locationTasks) {
-                        sendNotification(locationTask)
-                        if(read){
-                            sayText(this, locationTask.task.title)
-                        }
-                    }
-                }
-            }
-
-
-        } else {
-            Log.e("MyLogMessage", "Invalid geofence transition type")
+        LocationServices.getFusedLocationProviderClient(this).lastLocation.addOnSuccessListener { location: Location? ->
+            locationRetrieved(location, locationTasks)
+        }.addOnFailureListener {
+            Log.e("MyLogMessage", "Last location failed to be retrieved")
         }
     }
 
+    /**
+     * When the current location is retrieved, runs through each location task and sends a notification if the current speed is less than the location tasks's max speed.
+     * @param location The current location of the user.
+     * @param locationTasks The list of location tasks to send notifications for.
+     */
+    private fun locationRetrieved(location: Location?, locationTasks: List<FullLocationTask>) {
+        val currentSpeed = location?.speed ?: 0.0f
+        val defaultMaxSpeed =
+            if (sharedPreferences.getBoolean("max_speed_enabled", false)) {
+                sharedPreferences.getFloat("max_speed", Float.MAX_VALUE)
+            } else {
+                Float.MAX_VALUE
+            }
+
+        for (locationTask in locationTasks) {
+
+            val maxSpeed: Float =
+                locationTask.locationTask.distance ?: defaultMaxSpeed
+
+            if (currentSpeed * METERS_SEC_TO_MILES_HOUR < maxSpeed) {
+                sendNotification(locationTask)
+            }
+        }
+    }
+
+    /**
+     * Gets a list of the location tasks associated with the triggered geofences.
+     * @param geofences The geofences that were triggered
+     * @return The list of location tasks associated with the triggered geofences.
+     */
     private fun getTriggeredLocationTasks(geofences: List<Geofence>): List<FullLocationTask> {
         val repository = NotiLocationsRepository.getInstance(application)
 
@@ -106,10 +108,8 @@ class GeofenceJobIntentService : JobIntentService() {
         return locationTasks
     }
 
-    private var mTextToSpeech: TextToSpeech? = null
-
-    fun sayText(context: Context?, message: String?) {
-        mTextToSpeech = TextToSpeech(context) { status ->
+    private fun sayText(context: Context?, message: String?) {
+        TextToSpeech(context) { status ->
             try {
                 if (mTextToSpeech != null && status == TextToSpeech.SUCCESS) {
                     mTextToSpeech!!.language = Locale.US
@@ -121,6 +121,10 @@ class GeofenceJobIntentService : JobIntentService() {
         }
     }
 
+    /**
+     * Sends a notification for the location task and reads it aloud if enabled.
+     * @param locationTask The location task to send a notification for.
+     */
     private fun sendNotification(locationTask: FullLocationTask) {
         Log.i("MyLogMessage", "sendNotification: " + locationTask.task.title)
         val notificationBuilder =
@@ -136,13 +140,28 @@ class GeofenceJobIntentService : JobIntentService() {
             notify(locationTask.locationTask.id?.toInt() ?: 0, notificationBuilder.build())
         }
 
+        if (sharedPreferences.getBoolean("voice_notification", false)) {
+            sayText(this, locationTask.task.title)
+        }
+
     }
 
+    /**
+     * Companion object that holds constants and allows work to be queued.
+     */
     companion object {
 
+        /** Unique job id */
         private const val JOB_ID = 573
+
+        /** Ratio to use to convert meters/sec to miles/hour */
         private const val METERS_SEC_TO_MILES_HOUR = 2.23694
 
+        /**
+         * Queues work for this class.
+         * @param context The context of the work.
+         * @param intent The intent of the work.
+         */
         fun enqueueWork(context: Context, intent: Intent) {
             enqueueWork(
                 context,

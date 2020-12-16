@@ -47,13 +47,6 @@ class HandleGeofences private constructor(val context: Context) {
                 Manifest.permission.ACCESS_FINE_LOCATION
             ) != PackageManager.PERMISSION_GRANTED
         ) {
-            // TODO: Consider calling
-            //    ActivityCompat#requestPermissions
-            // here to request the missing permissions, and then overriding
-            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-            //                                          int[] grantResults)
-            // to handle the case where the user grants the permission. See the documentation
-            // for ActivityCompat#requestPermissions for more details.
             Log.i("MyLogMessage", "Missing permission")
             return
         }
@@ -113,15 +106,14 @@ class HandleGeofences private constructor(val context: Context) {
 
     private fun createGeofencingRequest(geofences: List<Geofence>): GeofencingRequest {
         return GeofencingRequest.Builder().apply {
-//            setInitialTrigger(GeofencingRequest.INITIAL_TRIGGER_ENTER)
-            setInitialTrigger(0)
+            setInitialTrigger(GeofencingRequest.INITIAL_TRIGGER_ENTER)
+//            setInitialTrigger(0)
             addGeofences(geofences)
         }.build()
     }
 
     companion object {
         private var instance: HandleGeofences? = null
-        private var geofencesAdded: HandleGeofences? = null
 
         fun getInstance(context: Context): HandleGeofences {
             if (instance == null) {

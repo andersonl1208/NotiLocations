@@ -8,6 +8,7 @@ import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.databinding.DataBindingUtil
+import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.findNavController
 import androidx.navigation.ui.NavigationUI
 import androidx.preference.PreferenceManager
@@ -49,22 +50,18 @@ class MainActivity : AppCompatActivity() {
             AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
         }
 
-//        val navController = this.findNavController(R.id.navHostFragment)
-//        NavigationUI.setupActionBarWithNavController(this, navController)
-
-
-        //val viewModel = ViewModelProvider(this).get(NotiLocationsViewModel::class.java)
-
-//        viewModel.createLocation(Location(45, "Test location", 44.872978, -91.929399))
-//        viewModel.createTask(Task(45, "Test notification", "Test longer description. I don't know what I'm doing but it seems promising!"))
-//        viewModel.createLocationTask(LocationTask(45, 45, 45, 500.0F, 100, Date(), false))
-
         val response = GoogleApiAvailability.getInstance().isGooglePlayServicesAvailable(this)
         if (response != ConnectionResult.SUCCESS) {
             GoogleApiAvailability.getInstance().getErrorDialog(this, response, 1)
                 .show()
         }
     }
+
+    override fun onPause() {
+        ViewModelProvider(this).get(NotiLocationsViewModel::class.java).cleanUp()
+        super.onPause()
+    }
+
 
     private fun createNotificationChannel() {
         // Create the NotificationChannel, but only on API 26+ because

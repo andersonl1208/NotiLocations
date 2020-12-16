@@ -4,7 +4,7 @@ import androidx.lifecycle.LiveData
 import androidx.room.*
 
 /**
- * Dao interface for tasks. Contains functions to get a task, get all task, and insert, delete or update tasks.
+ * Dao interface for tasks.
  */
 @Dao
 interface TaskDao {
@@ -44,4 +44,10 @@ interface TaskDao {
      */
     @Update
     fun update(task: Task?)
+
+    /**
+     * Deletes all tasks without an associated location task from the database.
+     */
+    @Query("DELETE FROM task WHERE id NOT IN (SELECT task_id FROM locationtask)")
+    fun cleanUpTasks()
 }

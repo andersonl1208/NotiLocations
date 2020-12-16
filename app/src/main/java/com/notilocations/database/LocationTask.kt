@@ -8,7 +8,7 @@ import java.util.*
  * @property id The primary key for the location task. If null when inserted, it will be auto-generated.
  * @property locationId The id of the location associated with this location task.
  * @property taskId The id of the task associated with this location task.
- * @property distance How distance from the location where the notification will get sent.
+ * @property distance The radius of the circle in which the notification will be triggered.
  * @property maxSpeed The max speed you can be going while still getting a notification.
  * @property creationDate The date the location task was created.
  * @property isCompleted Whether or not this location task has been completed.
