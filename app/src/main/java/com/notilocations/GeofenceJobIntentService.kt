@@ -116,7 +116,7 @@ class GeofenceJobIntentService : JobIntentService() {
     }
 
     private fun sayText(context: Context?, message: String?) {
-        TextToSpeech(context) { status ->
+        mTextToSpeech = TextToSpeech(context) { status ->
             try {
                 if (mTextToSpeech != null && status == TextToSpeech.SUCCESS) {
                     mTextToSpeech!!.language = Locale.US
