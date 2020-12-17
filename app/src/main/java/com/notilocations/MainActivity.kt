@@ -49,12 +49,14 @@ class MainActivity : AppCompatActivity() {
         DataBindingUtil.setContentView<ActivityMainBinding>(this, R.layout.activity_main)
 
 
-        if(checkLocationPermission()){
-            Snackbar.make(findViewById(android.R.id.content), "Permission already granted.", Snackbar.LENGTH_LONG).show()
+        if (checkLocationPermission()) {
             setupGeofences()
-        }
-        else{
-            Snackbar.make(findViewById(android.R.id.content), "Please request permission.", Snackbar.LENGTH_LONG).show()
+        } else {
+            Snackbar.make(
+                findViewById(android.R.id.content),
+                "Please request permission.",
+                Snackbar.LENGTH_LONG
+            ).show()
             requestLocationPermission()
         }
         //setupGeofences()

@@ -2,23 +2,28 @@ package com.notilocations
 
 
 import android.view.View
-import android.view.ViewGroup
+import android.widget.SeekBar
+import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
+import androidx.test.espresso.Espresso
 import androidx.test.espresso.Espresso.onView
+import androidx.test.espresso.UiController
+import androidx.test.espresso.ViewAction
 import androidx.test.espresso.action.ViewActions.*
+import androidx.test.espresso.assertion.ViewAssertions.matches
 import androidx.test.espresso.contrib.RecyclerViewActions.actionOnItemAtPosition
 import androidx.test.espresso.matcher.ViewMatchers.*
 import androidx.test.filters.LargeTest
 import androidx.test.rule.ActivityTestRule
+import androidx.test.rule.GrantPermissionRule
 import androidx.test.runner.AndroidJUnit4
-import org.hamcrest.Description
 import org.hamcrest.Matcher
-import org.hamcrest.Matchers.`is`
-import org.hamcrest.Matchers.allOf
-import org.hamcrest.TypeSafeMatcher
+import org.junit.Assert.assertEquals
+import org.junit.Assert.assertFalse
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
+
 
 @LargeTest
 @RunWith(AndroidJUnit4::class)
@@ -28,144 +33,100 @@ class SettingsTest {
     @JvmField
     var mActivityTestRule = ActivityTestRule(MainActivity::class.java)
 
+    @Rule
+    @JvmField
+    var mGrantPermissionRule =
+        GrantPermissionRule.grant(
+            "android.permission.ACCESS_FINE_LOCATION"
+        )
+
     @Test
     fun settingsTest() {
+        val sharedPreferences =
+            PreferenceManager.getDefaultSharedPreferences(mActivityTestRule.activity)
+
+
         val floatingActionButton = onView(
-            allOf(
-                withId(R.id.settingButton), withContentDescription("Go to settings"),
-                childAtPosition(
-                    childAtPosition(
-                        withClassName(`is`("android.widget.FrameLayout")),
-                        0
-                    ),
-                    0
-                ),
-                isDisplayed()
-            )
+            withId(R.id.settingsButton)
         )
+
         floatingActionButton.perform(click())
 
         val recyclerView = onView(
-            allOf(
-                withId(R.id.recycler_view),
-                childAtPosition(
-                    withId(android.R.id.list_container),
-                    0
-                )
-            )
+            withId(R.id.recycler_view)
         )
         recyclerView.perform(actionOnItemAtPosition<ViewHolder>(1, click()))
 
-        val recyclerView2 = onView(
-            allOf(
-                withId(R.id.recycler_view),
-                childAtPosition(
-                    withId(android.R.id.list_container),
-                    0
-                )
-            )
-        )
-        recyclerView2.perform(actionOnItemAtPosition<ViewHolder>(1, click()))
+        assert(sharedPreferences.getBoolean("dark_theme", false))
+        Espresso.pressBack()
+        floatingActionButton.perform(click())
+        recyclerView.perform(actionOnItemAtPosition<ViewHolder>(1, click()))
+        assertFalse(sharedPreferences.getBoolean("dark_theme", true))
 
-        val recyclerView3 = onView(
-            allOf(
-                withId(R.id.recycler_view),
-                childAtPosition(
-                    withId(android.R.id.list_container),
-                    0
-                )
-            )
-        )
-        recyclerView3.perform(actionOnItemAtPosition<ViewHolder>(2, click()))
+        recyclerView.perform(actionOnItemAtPosition<ViewHolder>(2, click()))
+        assert(sharedPreferences.getBoolean("voice_notification", false))
+        recyclerView.perform(actionOnItemAtPosition<ViewHolder>(2, click()))
+        assertFalse(sharedPreferences.getBoolean("voice_notification", true))
 
-        val recyclerView4 = onView(
-            allOf(
-                withId(R.id.recycler_view),
-                childAtPosition(
-                    withId(android.R.id.list_container),
-                    0
-                )
-            )
-        )
-        recyclerView4.perform(actionOnItemAtPosition<ViewHolder>(2, click()))
-
-        val recyclerView5 = onView(
-            allOf(
-                withId(R.id.recycler_view),
-                childAtPosition(
-                    withId(android.R.id.list_container),
-                    0
-                )
-            )
-        )
-        recyclerView5.perform(actionOnItemAtPosition<ViewHolder>(3, click()))
-
+        recyclerView.perform(actionOnItemAtPosition<ViewHolder>(3, click()))
         val appCompatEditText = onView(
-            allOf(
-                withId(android.R.id.edit),
-                childAtPosition(
-                    childAtPosition(
-                        withClassName(`is`("android.widget.ScrollView")),
-                        0
-                    ),
-                    1
-                )
-            )
+            withId(android.R.id.edit)
         )
-        appCompatEditText.perform(scrollTo(), replaceText("5"), closeSoftKeyboard())
-
+        appCompatEditText.perform(scrollTo(), replaceText("5.3"), closeSoftKeyboard())
         val appCompatButton = onView(
-            allOf(
-                withId(android.R.id.button1), withText("OK"),
-                childAtPosition(
-                    childAtPosition(
-                        withId(R.id.buttonPanel),
-                        0
-                    ),
-                    3
-                )
-            )
+            withId(android.R.id.button1)
         )
         appCompatButton.perform(scrollTo(), click())
+        assertEquals("5.3", sharedPreferences.getString("distance", ""))
 
-        val recyclerView6 = onView(
-            allOf(
-                withId(R.id.recycler_view),
-                childAtPosition(
-                    withId(android.R.id.list_container),
-                    0
-                )
-            )
+        val seekBar = onView(
+            withId(R.id.seekbar)
         )
-        recyclerView6.perform(actionOnItemAtPosition<ViewHolder>(5, click()))
 
-        val recyclerView7 = onView(
-            allOf(
-                withId(R.id.recycler_view),
-                childAtPosition(
-                    withId(android.R.id.list_container),
-                    0
-                )
-            )
-        )
-        recyclerView7.perform(actionOnItemAtPosition<ViewHolder>(6, click()))
+
+        recyclerView.perform(actionOnItemAtPosition<ViewHolder>(5, click()))
+        assert(sharedPreferences.getBoolean("max_speed_enabled", false))
+        seekBar.check(matches(isEnabled()))
+
+        recyclerView.perform(actionOnItemAtPosition<ViewHolder>(5, click()))
+        //seekBar.check(matches(not(isEnabled())))
+        assertFalse(sharedPreferences.getBoolean("max_speed_enabled", true))
+        recyclerView.perform(actionOnItemAtPosition<ViewHolder>(5, click()))
+
+        onView(withId(R.id.seekbar)).perform(setProgress(51))
+
+        onView(withId(R.id.seekbar_value)).check(matches(withText("61")))
+
+        recyclerView.perform(actionOnItemAtPosition<ViewHolder>(5, click()))
     }
 
-    private fun childAtPosition(
-        parentMatcher: Matcher<View>, position: Int
-    ): Matcher<View> {
-
-        return object : TypeSafeMatcher<View>() {
-            override fun describeTo(description: Description) {
-                description.appendText("Child at position $position in parent ")
-                parentMatcher.describeTo(description)
+    private fun setProgress(progress: Int): ViewAction? {
+        return object : ViewAction {
+            override fun perform(uiController: UiController?, view: View) {
+                (view as SeekBar).progress = progress
             }
 
-            public override fun matchesSafely(view: View): Boolean {
-                val parent = view.parent
-                return parent is ViewGroup && parentMatcher.matches(parent)
-                        && view == parent.getChildAt(position)
+            override fun getDescription(): String {
+                return "Set a progress"
+            }
+
+            override fun getConstraints(): Matcher<View> {
+                return isAssignableFrom(SeekBar::class.java)
             }
         }
     }
+
+//    private fun withTextColor(color: Color): Matcher<View?>? {
+//        return object : BoundedMatcher<View?, TextView>(TextView::class.java) {
+//            override fun matchesSafely(textView: TextView): Boolean {
+//                val colorId = ContextCompat.getColor(textView.context, expectedId)
+//                return textView.currentTextColor == colorId
+//            }
+//
+//            override fun describeTo(description: Description) {
+//                description.appendText("with text color: ")
+//                description.appendValue(expectedId)
+//            }
+//        }
+//    }
 }
