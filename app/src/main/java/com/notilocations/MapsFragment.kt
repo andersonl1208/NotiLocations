@@ -128,6 +128,7 @@ class MapsFragment : Fragment(), OnMapReadyCallback {
 
         if (notiLocationTask.hasTask()) {
             viewModel.syncNotiLocationTask(notiLocationTask)
+            HandleGeofences.getInstance(requireActivity().application).create()
             currentView.findNavController()
                 .navigate(R.id.action_mapsFragment_to_swipeView)
         } else {
