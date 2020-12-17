@@ -37,6 +37,9 @@ class MapsFragment : Fragment(), OnMapReadyCallback {
 
     private lateinit var binding: FragmentMapsBinding
 
+    /**
+     * Function that calls on first initialization of the map
+     */
     private val callback = OnMapReadyCallback { googleMap ->
         map = googleMap
         createLocationObserver()
@@ -172,7 +175,9 @@ class MapsFragment : Fragment(), OnMapReadyCallback {
 
     }
 
-    // This function does nothing and is never called
+    /**
+     *  This function does nothing and is never called
+     */
     override fun onMapReady(googleMap: GoogleMap?) {}
 
 

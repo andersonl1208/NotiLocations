@@ -39,6 +39,11 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            getWindow().navigationBarColor = ContextCompat.getColor(this, R.color.colorPrimary);
+//            getWindow().isNavigationBarContrastEnforced = ContextCompat.getColor(this, R.color.colorForeground));
+        }
+
         createNotificationChannel()
 
         DataBindingUtil.setContentView<ActivityMainBinding>(this, R.layout.activity_main)
