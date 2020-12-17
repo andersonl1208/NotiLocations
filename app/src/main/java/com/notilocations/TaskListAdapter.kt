@@ -154,8 +154,6 @@ class TaskListAdapter(val fragment: TaskListFragment) :
     override fun onBindViewHolder(holder: TaskHolder, position: Int) {
         val taskTitle = holder.taskView.findViewById<TextView>(R.id.titleText)
         val taskDescription = holder.taskView.findViewById<TextView>(R.id.descriptionText)
-        val taskLat = holder.taskView.findViewById<TextView>(R.id.latText)
-        val taskLng = holder.taskView.findViewById<TextView>(R.id.lngText)
 
         holder.taskView.setOnClickListener { v: View ->
             val action = SwipeViewFragmentDirections.actionSwipeViewToCreateTaskFragment(
@@ -169,8 +167,6 @@ class TaskListAdapter(val fragment: TaskListFragment) :
             val locationTask = locationTasks?.get(position)
             taskTitle.text = locationTask?.task?.title.toString()
             taskDescription.text = locationTask?.task?.description.toString()
-            taskLat.text = locationTask?.location?.lat.toString()
-            taskLng.text = locationTask?.location?.lng.toString()
 
         } else {
             taskDescription.text = ""
